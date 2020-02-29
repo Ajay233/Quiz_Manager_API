@@ -1,0 +1,1 @@
+ALTER TABLE users ADD verified VARCHAR(250) NOT NULL;

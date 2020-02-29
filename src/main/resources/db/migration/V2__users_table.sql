@@ -1,0 +1,9 @@
+CREATE TABLE users (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    forename VARCHAR(250) NOT NULL,
+    surname VARCHAR(250) NOT NULL,
+    email VARCHAR(250) NOT NULL,
+    password VARCHAR(250) NOT NULL,
+    permission VARCHAR(250) NOT NULL,
+    PRIMARY KEY (id)
+);
