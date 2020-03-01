@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -51,11 +52,13 @@ public class UserController {
     ApplicationEventPublisher eventPublisher;
 
 
+    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
 
+    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
     @RequestMapping(value = "/users/updateForename", method = RequestMethod.PUT)
     public ResponseEntity<?> updateForename(@RequestBody User user){
         User tempUser = userRepository.findByEmail(user.getEmail());
@@ -64,6 +67,7 @@ public class UserController {
         return ResponseEntity.ok("Forename changed");
     }
 
+    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
     @RequestMapping(value = "/users/deleteAccount", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteAccount(@RequestBody User user){
         User tempUser = userRepository.findByEmail(user.getEmail());
@@ -71,10 +75,16 @@ public class UserController {
         return ResponseEntity.ok("Sorry to see you go " + tempUser.getForename() + "!! Your account has now been deleted");
     }
 
-    @RequestMapping(value = "/users/auth/signUp", method = RequestMethod.POST)
+    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
+    @RequestMapping(value = "/users/auth/signUp", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> signUpNewUser(@RequestBody User user){
         System.out.println(user);
         System.out.println(userRepository.findByEmail(user.getEmail()));
+
+        if(user.getEmail().equals("")){
+            return ResponseEntity.badRequest().body("No email supplied");
+        }
+
         if(userRepository.findByEmail(user.getEmail()) == null){
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             // Do sign up
@@ -92,23 +102,29 @@ public class UserController {
             // create the message that will go in the email.  will need to include the token
             String message = "Hi " + newUser.getForename() + "\r\n\r\n" + "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:8080/users/auth/verify?token=" + token;
 
+            // Start a new thread so the user can be informed that their account has been successfully created
             // Send the token as a link in an email to the user
-            MailService mailService = new MailService();
-            mailService.composeAndSendEmail(message,
-                    "ajaymungurwork@outlook.com",
-                    "ajaymungur@hotmail.com",
-                    "Complete your registration",
-                    mailConfig
-            );
-
+            new Thread(() -> {
+                try {
+                    MailService mailService = new MailService();
+                    mailService.composeAndSendEmail(message,
+                            "ajaymungurwork@outlook.com",
+                            "ajaymungur@hotmail.com",
+                            "Complete your registration",
+                            mailConfig
+                    );
+                } catch (MailSendException e) {
+                    e.printStackTrace();
+                }
+            }).start();
             return ResponseEntity.ok("Welcome to the quiz app");
         } else {
-            return ResponseEntity.ok("That email already has an account");
+            return ResponseEntity.badRequest().body("That email already has an account");
         }
     }
 
-
-    @RequestMapping(value = "/users/auth/verify", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
+    @RequestMapping(value = "/users/auth/verify", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> verifyUser(@RequestParam String token){
         VerificationToken verificationToken;
 
@@ -116,7 +132,7 @@ public class UserController {
         verificationToken = verificationTokenRepository.findByToken(token);
         System.out.println(verificationToken);
         if(verificationToken == null){
-            return new ResponseEntity<VerificationToken>(verificationToken,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<VerificationToken>(verificationToken, HttpStatus.BAD_REQUEST);
         }
 
         final Calendar cal = Calendar.getInstance();
@@ -132,7 +148,7 @@ public class UserController {
         user.setVerified("true");
         userRepository.save(user);
 
-        return new ResponseEntity<VerificationToken>(verificationToken, HttpStatus.ACCEPTED);
+        return ResponseEntity.ok("Verified");
     }
 
     @RequestMapping(value = "/users/auth/resendToken", method = RequestMethod.GET)
@@ -182,7 +198,7 @@ public class UserController {
             );
         } catch (BadCredentialsException e) {
 //            throw new Exception("Incorrect username or password", e);
-            return ResponseEntity.ok("Incorrect username or password");
+            return ResponseEntity.badRequest().body("Incorrect username or password");
         }
 
         final UserDetails userDetails = quizUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
