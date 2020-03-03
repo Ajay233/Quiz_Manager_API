@@ -1,10 +1,7 @@
 package com.apiTest.contoller;
 
 import com.apiTest.config.MailConfig;
-import com.apiTest.model.AuthenticationRequest;
-import com.apiTest.model.AuthenticationResponse;
-import com.apiTest.model.User;
-import com.apiTest.model.VerificationToken;
+import com.apiTest.model.*;
 import com.apiTest.repository.UserRepository;
 import com.apiTest.repository.VerificationTokenRepository;
 import com.apiTest.service.MailService;
@@ -124,12 +121,13 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
-    @RequestMapping(value = "/users/auth/verify", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> verifyUser(@RequestParam String token){
+    @RequestMapping(value = "/users/auth/verify", method = RequestMethod.POST)
+    public ResponseEntity<?> verifyUser(@RequestBody VerificationToken token){
+        System.out.println(token.getToken());
         VerificationToken verificationToken;
 
         // Make sure the token exists
-        verificationToken = verificationTokenRepository.findByToken(token);
+        verificationToken = verificationTokenRepository.findByToken(token.getToken());
         System.out.println(verificationToken);
         if(verificationToken == null){
             return new ResponseEntity<VerificationToken>(verificationToken, HttpStatus.BAD_REQUEST);
@@ -144,16 +142,19 @@ public class UserController {
         }
         System.out.println("Verify endpoint hit");
         Long id = verificationToken.getUserId();
-        User user = userRepository.getOne(id);
+        User user = userRepository.findById(id).get();
         user.setVerified("true");
         userRepository.save(user);
+        verificationTokenRepository.deleteById(verificationToken.getId());
 
-        return ResponseEntity.ok("Verified");
+        VerificationResponse verificationResponse = new VerificationResponse(user, "verified", HttpStatus.OK);
+        return new ResponseEntity<VerificationResponse>(verificationResponse, HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
     @RequestMapping(value = "/users/auth/resendToken", method = RequestMethod.GET)
     public ResponseEntity<?> resendToken(@RequestBody VerificationToken token){
-        User user = userRepository.getOne(token.getUserId());
+        User user = userRepository.findById(token.getUserId()).get();
 
         // Delete the old token
         verificationTokenRepository.delete(token);
@@ -171,16 +172,23 @@ public class UserController {
         String message = "Hi " + user.getForename() + "\r\n\r\n" + "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:8080/users/auth/verify?token=" + token;
 
         // send email
-        MailService mailService = new MailService();
-        mailService.composeAndSendEmail(message,
-                "ajaymungurwork@outlook.com",
-                "ajaymungur@hotmail.com",
-                "Complete your registration",
-                mailConfig
-        );
+        new Thread(() -> {
+            try {
+                MailService mailService = new MailService();
+                mailService.composeAndSendEmail(message,
+                        "ajaymungurwork@outlook.com",
+                        "ajaymungur@hotmail.com",
+                        "Complete your registration",
+                        mailConfig
+                );
+            } catch(MailSendException e){
+                e.printStackTrace();
+            }
+        }).start();
         return ResponseEntity.ok("re-issued");
     }
 
+    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
     @RequestMapping(value = "/users/auth/login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
@@ -196,14 +204,15 @@ public class UserController {
                             authenticationRequest.getPassword()
                     )
             );
+            final UserDetails userDetails = quizUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+            final User user = userRepository.findByEmail(authenticationRequest.getEmail());
+            final String jwt = jwtTokenUtil.generateToken(userDetails);
+            return ResponseEntity.ok(new AuthenticationResponse(user, jwt)); // Need to improve on this so I can send more (look into ResponseEntity)
         } catch (BadCredentialsException e) {
 //            throw new Exception("Incorrect username or password", e);
             return ResponseEntity.badRequest().body("Incorrect username or password");
         }
 
-        final UserDetails userDetails = quizUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthenticationResponse(jwt)); // Need to improve on this so I can send more (look into ResponseEntity)
     }
 
 
