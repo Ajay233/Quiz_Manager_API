@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+
+  practice-db:
+    image: "mysql:8.0.19"
+    ports:
+      - "32793:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=
+      - MYSQL_USER=
+      - MYSQL_PASSWORD=
+    container_name: mysql-test3
+    volumes:
+      - fs-mysql-audit-data:/var/lib/mysql
+volumes:
+  fs-mysql-audit-data:
