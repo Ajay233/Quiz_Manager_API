@@ -21,6 +21,8 @@ public class MailService {
         return email;
     }
 
+
+
     private void sendEmail(SimpleMailMessage email, MailConfig mailConfig){
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(mailConfig.getHost());
