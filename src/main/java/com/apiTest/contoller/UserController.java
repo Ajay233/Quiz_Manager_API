@@ -53,13 +53,11 @@ public class UserController {
     ApplicationEventPublisher eventPublisher;
 
 
-    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
 
-    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
     @RequestMapping(value = "/users/updateForename", method = RequestMethod.PUT)
     public ResponseEntity<?> updateForename(@RequestBody User user){
         User tempUser = userRepository.findByEmail(user.getEmail());
@@ -68,7 +66,6 @@ public class UserController {
         return ResponseEntity.ok("Forename changed");
     }
 
-    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
     @RequestMapping(value = "/users/deleteAccount", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteAccount(@RequestBody User user){
         User tempUser = userRepository.findByEmail(user.getEmail());
@@ -76,7 +73,7 @@ public class UserController {
         return ResponseEntity.ok("Sorry to see you go " + tempUser.getForename() + "!! Your account has now been deleted");
     }
 
-    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
+
     @RequestMapping(value = "/users/auth/signUp", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> signUpNewUser(@RequestBody User user){
         System.out.println(user);
@@ -124,7 +121,7 @@ public class UserController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
+
     @RequestMapping(value = "/users/auth/verify", method = RequestMethod.POST)
     public ResponseEntity<?> verifyUser(@RequestBody VerificationToken token){
         System.out.println(token.getToken());
@@ -155,7 +152,7 @@ public class UserController {
         return new ResponseEntity<VerificationResponse>(verificationResponse, HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
+
     @RequestMapping(value = "/users/auth/resendToken", method = RequestMethod.POST)
     public ResponseEntity<?> resendToken(@RequestBody VerificationToken token){
 
@@ -199,7 +196,7 @@ public class UserController {
         return ResponseEntity.ok("RE-ISSUED");
     }
 
-    @CrossOrigin(origins = "http://localhost:3000") // <-- Temp, needs to be removed once config file created
+
     @RequestMapping(value = "/users/auth/login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
