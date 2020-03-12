@@ -19,7 +19,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Calendar;
 import java.util.List;
@@ -54,8 +57,9 @@ public class UserController {
 
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
+    public ResponseEntity<?> getAllUsers(){
+        System.out.println("users endpoint hit");
+        return new ResponseEntity<List>(userRepository.findAll(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/users/updateForename", method = RequestMethod.PUT)
