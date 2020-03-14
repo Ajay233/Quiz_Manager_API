@@ -56,20 +56,51 @@ public class UserController {
     ApplicationEventPublisher eventPublisher;
 
 
+    //LIST ALL USERS
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public ResponseEntity<?> getAllUsers(){
         System.out.println("users endpoint hit");
         return new ResponseEntity<List>(userRepository.findAll(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/users/updateForename", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateForename(@RequestBody User user){
-        User tempUser = userRepository.findByEmail(user.getEmail());
-        tempUser.setForename(user.getForename());
-        userRepository.save(tempUser);
-        return ResponseEntity.ok("Forename changed");
+    //EDIT PROFILE DATA (Forename, Surname, Email  ** will need to handle email separately and do another verify **)
+    @RequestMapping(value = "/users/update", method = RequestMethod.POST)
+    public ResponseEntity<?> updateUserData(@RequestBody User updatedUserData){
+        User user = userRepository.findById(updatedUserData.getId()).get();
+        user.setForename(updatedUserData.getForename());
+        user.setSurname(updatedUserData.getSurname());
+        user.setEmail(updatedUserData.getEmail());
+        userRepository.save(user);
+        return ResponseEntity.ok("UPDATED");
     }
 
+    //UPDATE PASSWORD
+    @RequestMapping(value = "/users/updatePassword", method = RequestMethod.POST)
+    public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdate newDetails){
+
+        User user = userRepository.findByEmail(newDetails.getEmail());
+        if(user == null){
+            return new ResponseEntity<String>("NO MATCH", HttpStatus.NOT_FOUND);
+        }
+        try {
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    newDetails.getEmail(),
+                    newDetails.getOldPassword()
+                )
+            );
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String updatedPassword = encoder.encode(newDetails.getNewPassword());
+            user.setPassword(updatedPassword);
+            userRepository.save(user);
+            return ResponseEntity.ok("UPDATED");
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<String>("PASSWORD INCORRECT", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    //DELETE ACCOUNT
     @RequestMapping(value = "/users/deleteAccount", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteAccount(@RequestBody User user){
         User tempUser = userRepository.findByEmail(user.getEmail());
@@ -77,7 +108,7 @@ public class UserController {
         return ResponseEntity.ok("Sorry to see you go " + tempUser.getForename() + "!! Your account has now been deleted");
     }
 
-
+    // SIGN UP
     @RequestMapping(value = "/users/auth/signUp", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> signUpNewUser(@RequestBody User user){
         System.out.println(user);
@@ -125,7 +156,7 @@ public class UserController {
         }
     }
 
-
+    //VERIFY USER'S EMAIL IS REAL
     @RequestMapping(value = "/users/auth/verify", method = RequestMethod.POST)
     public ResponseEntity<?> verifyUser(@RequestBody VerificationToken token){
         System.out.println(token.getToken());
@@ -157,6 +188,7 @@ public class UserController {
     }
 
 
+    //RESEND ACCOUNT VERIFICATION TOKEN
     @RequestMapping(value = "/users/auth/resendToken", method = RequestMethod.POST)
     public ResponseEntity<?> resendToken(@RequestBody VerificationToken token){
 
@@ -201,6 +233,7 @@ public class UserController {
     }
 
 
+    // LOGIN
     @RequestMapping(value = "/users/auth/login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
@@ -218,6 +251,7 @@ public class UserController {
             );
             final UserDetails userDetails = quizUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
             final User user = userRepository.findByEmail(authenticationRequest.getEmail());
+            user.setPassword(""); // Remove the encoded password so it's not stored on the front end
             final String jwt = jwtTokenUtil.generateToken(userDetails);
             return ResponseEntity.ok(new AuthenticationResponse(user, jwt)); // Need to improve on this so I can send more (look into ResponseEntity)
         } catch (BadCredentialsException e) {
@@ -227,6 +261,5 @@ public class UserController {
         }
 
     }
-
 
 }
