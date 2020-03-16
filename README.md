@@ -40,7 +40,10 @@ number of great sites which will generate a strong key for you, such as:
 
 
 ## Viewing endpoints in Swagger
-TBC
+
+Once you have completed the set up above and have started running the app, you can view and try out the available using
+swagger at: http://localhost:8080/swagger-ui.html
+
 
 ## Testing with Postman
 TBC

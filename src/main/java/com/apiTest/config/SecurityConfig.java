@@ -72,7 +72,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and()
                 .csrf().disable()
-                .authorizeRequests().antMatchers("/users/auth/**").permitAll()
+                .authorizeRequests()
+                .antMatchers("/users/auth/**")
+                .permitAll()
+                .and()
+                .authorizeRequests()
+                .regexMatchers(
+                "/swagger-ui.html.*",
+                "/v2/api-docs",
+                "/swagger-resources.*",
+                "/webjars/springfox-swagger-ui.*",
+                "/health").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Stops sessions being created
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
