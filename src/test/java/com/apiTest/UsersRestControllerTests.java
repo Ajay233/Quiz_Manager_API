@@ -12,19 +12,19 @@ import java.io.IOException;
 
 public class UsersRestControllerTests {
 
-    @InjectMocks
-    UserController userController;
-
-    @Mock
-    UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-    }
-
-    @Test
-    void testSignUp() throws IOException {
+//    @InjectMocks
+//    UserController userController;
+//
+//    @Mock
+//    UserRepository userRepository;
+//
+//    @BeforeEach
+//    void setUp() throws Exception {
+//        MockitoAnnotations.initMocks(this);
+//    }
+//
+//    @Test
+//    void testSignUp() throws IOException {
 
         //To research
 
