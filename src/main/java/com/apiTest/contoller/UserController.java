@@ -65,11 +65,11 @@ public class UserController {
 
     //EDIT PROFILE DATA (Forename, Surname, Email  ** will need to handle email separately and do another verify **)
     @RequestMapping(value = "/users/update", method = RequestMethod.POST)
-    public ResponseEntity<?> updateUserData(@RequestBody User updatedUserData){
+    public ResponseEntity<?> updateUserData(@RequestBody UserDTO updatedUserData){
         User user = userRepository.findById(updatedUserData.getId()).get();
         user.setForename(updatedUserData.getForename());
         user.setSurname(updatedUserData.getSurname());
-        user.setEmail(updatedUserData.getEmail());
+        user.setEmail(updatedUserData.getNewEmail());
         userRepository.save(user);
         return ResponseEntity.ok("UPDATED");
     }
@@ -102,10 +102,10 @@ public class UserController {
 
     //DELETE ACCOUNT
     @RequestMapping(value = "/users/deleteAccount", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteAccount(@RequestBody User user){
-        User tempUser = userRepository.findByEmail(user.getEmail());
-        userRepository.deleteById(tempUser.getId());
-        return ResponseEntity.ok("Sorry to see you go " + tempUser.getForename() + "!! Your account has now been deleted");
+    public ResponseEntity<?> deleteAccount(@RequestBody UserDTO user){
+        System.out.println(user.getId());
+        userRepository.deleteById(user.getId());
+        return ResponseEntity.ok("DELETED");
     }
 
     // SIGN UP

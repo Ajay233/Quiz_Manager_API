@@ -1,6 +1,6 @@
 package com.apiTest.model;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -30,55 +30,4 @@ public class User {
         this.verified = "false";
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public String getForename(){
-        return forename;
-    }
-
-    public void setForename(String forename){
-        this.forename = forename;
-    }
-
-    public String getSurname(){
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getEmail(){
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword(){
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPermission(){
-        return permission;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
-    public String getVerified() {
-        return verified;
-    }
-
-    public void setVerified(String verified) {
-        this.verified = verified;
-    }
 }
