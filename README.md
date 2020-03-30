@@ -1,5 +1,7 @@
 # Spring Boot API
 
+[![CircleCI](https://circleci.com/gh/Ajay233/stand_alone_api.svg?style=svg)](https://circleci.com/gh/Ajay233/stand_alone_api)
+
 The aim of this mini project was to try to create a back end API that will allow users to:
  - Create accounts
  - Verify their new accounts via a token provided the the email address they supply
