@@ -37,8 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(myUserDetailsService);
         provider.setPasswordEncoder(new BCryptPasswordEncoder());
-        System.out.println(provider);
-        System.out.println("did the auth provider stuff");
         return provider;
     }
 
@@ -62,7 +60,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //        auth.userDetailsService(myUserDetailsService);
-        System.out.println("using auth manager");
         auth.authenticationProvider(authProvider());
     }
 
@@ -86,6 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Stops sessions being created
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        // Sets the jwt filter to be called before the username & password filter
     }
 
 }

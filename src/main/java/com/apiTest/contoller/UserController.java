@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletException;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
@@ -58,15 +60,14 @@ public class UserController {
 
     //LIST ALL USERS
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ResponseEntity<?> getAllUsers(){
-        System.out.println("users endpoint hit");
+    public ResponseEntity<?> getAllUsers() throws ServletException, IOException {
         return new ResponseEntity<List>(userRepository.findAll(), HttpStatus.OK);
     }
 
     //EDIT PROFILE DATA (Forename, Surname, Email  ** will need to handle email separately and do another verify **)
-    @RequestMapping(value = "/users/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/users/update", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserData(@RequestBody UserDTO updatedUserData){
-        User user = userRepository.findById(updatedUserData.getId()).get();
+        User user = userRepository.findByEmail(updatedUserData.getEmail());
         user.setForename(updatedUserData.getForename());
         user.setSurname(updatedUserData.getSurname());
         user.setEmail(updatedUserData.getNewEmail());
@@ -75,7 +76,7 @@ public class UserController {
     }
 
     //UPDATE PASSWORD
-    @RequestMapping(value = "/users/updatePassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/users/updatePassword", method = RequestMethod.PUT)
     public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdate newDetails){
 
         User user = userRepository.findByEmail(newDetails.getEmail());
@@ -103,7 +104,6 @@ public class UserController {
     //DELETE ACCOUNT
     @RequestMapping(value = "/users/deleteAccount", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteAccount(@RequestBody UserDTO user){
-        System.out.println(user.getId());
         userRepository.deleteById(user.getId());
         return ResponseEntity.ok("DELETED");
     }
@@ -111,8 +111,6 @@ public class UserController {
     // SIGN UP
     @RequestMapping(value = "/users/auth/signUp", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> signUpNewUser(@RequestBody User user){
-        System.out.println(user);
-        System.out.println(userRepository.findByEmail(user.getEmail()));
 
         //ADD - validation to check the email is in a valid format, if not return an error response
 
@@ -159,12 +157,10 @@ public class UserController {
     //VERIFY USER'S EMAIL IS REAL
     @RequestMapping(value = "/users/auth/verify", method = RequestMethod.POST)
     public ResponseEntity<?> verifyUser(@RequestBody VerificationToken token){
-        System.out.println(token.getToken());
         VerificationToken verificationToken;
 
         // Make sure the token exists
         verificationToken = verificationTokenRepository.findByToken(token.getToken());
-        System.out.println(verificationToken);
         if(verificationToken == null){
             return new ResponseEntity<String>("TOKEN_UNMATCHED", HttpStatus.NOT_FOUND);
         }
@@ -176,7 +172,6 @@ public class UserController {
             // or send another email and tell the user to use that instead
             return new ResponseEntity<String>("TOKEN_EXPIRED", HttpStatus.BAD_REQUEST);
         }
-        System.out.println("Verify endpoint hit");
         Long id = verificationToken.getUserId();
         User user = userRepository.findById(id).get();
         user.setVerified("true");
@@ -208,7 +203,6 @@ public class UserController {
         // save the token to a verificationToken object and then save to the token table
         VerificationToken replacementToken = new VerificationToken(userRepository.findByEmail(user.getEmail()).getId(), newToken);
         replacementToken.setExpiryDate(verificationToken.calcExpiryTime(1440));
-        System.out.println(replacementToken.getExpiryDate());
         verificationTokenRepository.save(replacementToken);
 
         // create the message that will go in the email
@@ -237,7 +231,7 @@ public class UserController {
     @RequestMapping(value = "/users/auth/login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
-        String verified = userRepository.findByEmail(authenticationRequest.getEmail()).getVerified();
+        // String verified = userRepository.findByEmail(authenticationRequest.getEmail()).getVerified();
 
         // Need to add in a check to see if a user is verified, if not return
         // a response to confirm they need to verify before they can login
