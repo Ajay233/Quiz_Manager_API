@@ -9,8 +9,8 @@ jobs:
 #      - image: circleci/php:7.1-apache-node-browsers # The primary container where steps are run
       - image: circleci/openjdk:8-jdk-stretch
       - image: circleci/mysql:8.0.4
-        ports:
-          - "32795:3306"
+#        ports:
+#          - "32795:3306"
         environment:
           MYSQL_ROOT_PASSWORD: test
           MYSQL_DATABASE: resttest
