@@ -1,36 +1,36 @@
 version: 2.1
 
-jobs:
-  build:
-    docker:
-#      - image: circleci/php:7.1-apache-node-browsers # The primary container where steps are run
-      - image: circleci/openjdk:8-jdk-stretch
-      - image: circleci/mysql:8.0.4
-#        ports:
-#          - "32795:3306"
-        environment:
-          MYSQL_ROOT_PASSWORD: test
-          MYSQL_DATABASE: resttest
-          MYSQL_USER: testuser
-          MYSQL_PASSWORD: testpassword
-
-    steps:
-      - checkout
-      - run:
-          # Our primary container isn't MYSQL so run a sleep command until it's ready.
-          name: Waiting for MySQL to be ready
-          command: |
-            for i in `seq 1 10`;
-            do
-              nc -z 127.0.0.1 3306 && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo Failed waiting for MySQL && exit 1
-      - run:
-          name: Install MySQL CLI #; Import dummy data; run an example query
-          command: |
-            sudo apt-get install default-mysql-client
+#jobs:
+#  build:
+#    docker:
+##      - image: circleci/php:7.1-apache-node-browsers # The primary container where steps are run
+#      - image: circleci/openjdk:8-jdk-stretch
+#      - image: circleci/mysql:8.0.4
+##        ports:
+##          - "32795:3306"
+#        environment:
+#          MYSQL_ROOT_PASSWORD: test
+#          MYSQL_DATABASE: resttest
+#          MYSQL_USER: testuser
+#          MYSQL_PASSWORD: testpassword
+#
+#    steps:
+#      - checkout
+#      - run:
+#          # Our primary container isn't MYSQL so run a sleep command until it's ready.
+#          name: Waiting for MySQL to be ready
+#          command: |
+#            for i in `seq 1 10`;
+#            do
+#              nc -z 127.0.0.1 3306 && echo Success && exit 0
+#              echo -n .
+#              sleep 1
+#            done
+#            echo Failed waiting for MySQL && exit 1
+#      - run:
+#          name: Install MySQL CLI #; Import dummy data; run an example query
+#          command: |
+#            sudo apt-get install default-mysql-client
 #            mysql -h 127.0.0.1 -u user -ppassw0rd test_db < sql-data/dummy.sql
 #            mysql -h 127.0.0.1 -u user -ppassw0rd --execute="SELECT * FROM test_db.Persons"
 
@@ -56,10 +56,60 @@ jobs:
 #            path: target/demo-java-spring-0.0.1-SNAPSHOT.jar
 #        # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
 
-orbs:
-  maven: circleci/maven@0.0.12
+jobs:
+  maven/test:
+    docker:
+      - image: circleci/openjdk:8-jdk-node
+      - image: circleci/mysql:8.0.4
 
+      environment:
+        MYSQL_ROOT_PASSWORD: test
+        MYSQL_DATABASE: resttest
+        MYSQL_USER: testuser
+        MYSQL_PASSWORD: testpassword
+
+    steps:
+      - checkout
+      - run:
+          # Our primary container isn't MYSQL so run a sleep command until it's ready.
+          name: Waiting for MySQL to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+            nc -z 127.0.0.1 3306 && echo Success && exit 0
+            echo -n .
+            sleep 1
+            done
+            echo Failed waiting for MySQL && exit 1
+       - run:
+          name: Install MySQL CLI #; Import dummy data; run an example query
+          command: |
+            sudo apt-get install default-mysql-client
+      - run:
+          name: Generate Cache Checksum
+          command: find . -name 'pom.xml' | sort | xargs cat > /tmp/maven_cache_seed
+      - restore_cache:
+          key: maven-{{ checksum "/tmp/maven_cache_seed" }}
+      - run:
+          name: Install Dependencies
+          command: mvn dependency:go-offline --settings 'pom.xml'
+      - run:
+          name: Run Tests
+          command: mvn verify --settings 'pom.xml'
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-{{ checksum "/tmp/maven_cache_seed" }}
+      - store_test_results:
+          path: target/surefire-reports
 workflows:
   maven_test:
     jobs:
-      - maven/test # checkout, build, test, and upload test results
+      - maven/test
+  version: 2
+
+
+#orbs:
+#  maven: circleci/maven@0.0.12
+
+
