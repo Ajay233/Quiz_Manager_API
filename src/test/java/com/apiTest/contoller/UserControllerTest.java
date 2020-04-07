@@ -109,6 +109,60 @@ class UserControllerTest {
 
     @Test
     void updatePassword() throws Exception {
+        String email = "joeBlogs@test.com";
+        String password = "testPassword";
+        String newPassword = "newTestPassword";
+
+        String body = "{\"email\":\"" + email + "\"," + "\"password\":\"" + password + "\"," + "\"newPassword\":\"" + newPassword + "\"}";
+        String authBody = "{\"email\":\"" + email + "\"," + "\"password\":\"" + newPassword + "\"}";
+
+        // Update password
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/updatePassword")
+                .headers(httpHeaders)
+                .content(body))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("UPDATED"));
+
+        // Then attempt login with the new password
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/auth/login")
+                .header("Content-Type", "application/json")
+                .content(authBody))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+    }
+
+    @Test
+    void updatePasswordWithIncorrectEmail() throws Exception {
+        String email = "joeBloggers@test.com";
+        String password = "testPassword";
+        String newPassword = "newTestPassword";
+
+        String body = "{\"email\":\"" + email + "\"," + "\"password\":\"" + password + "\"," + "\"newPassword\":\"" + newPassword + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/updatePassword")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().string("NO MATCH"));
+
+    }
+
+    @Test
+    void updatePasswordWithIncorrectPassword() throws Exception {
+        String email = "joeBlogs@test.com";
+        String password = "Password";
+        String newPassword = "newTestPassword";
+
+        String body = "{\"email\":\"" + email + "\"," + "\"password\":\"" + password + "\"," + "\"newPassword\":\"" + newPassword + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/updatePassword")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("PASSWORD INCORRECT"));
+
     }
 
     @Test

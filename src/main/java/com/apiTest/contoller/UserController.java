@@ -77,7 +77,7 @@ public class UserController {
 
     //UPDATE PASSWORD
     @RequestMapping(value = "/users/updatePassword", method = RequestMethod.PUT)
-    public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdate newDetails){
+    public ResponseEntity<?> updatePassword(@RequestBody UserDTO newDetails){
 
         User user = userRepository.findByEmail(newDetails.getEmail());
         if(user == null){
@@ -87,7 +87,7 @@ public class UserController {
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                     newDetails.getEmail(),
-                    newDetails.getOldPassword()
+                    newDetails.getPassword()
                 )
             );
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
