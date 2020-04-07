@@ -130,7 +130,6 @@ class UserControllerTest {
                 .content(authBody))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
-
     }
 
     @Test
@@ -146,7 +145,6 @@ class UserControllerTest {
                 .content(body))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().string("NO MATCH"));
-
     }
 
     @Test
@@ -162,11 +160,17 @@ class UserControllerTest {
                 .content(body))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().string("PASSWORD INCORRECT"));
-
     }
 
     @Test
     void deleteAccount() throws Exception {
+        String email = "joeBlogs@test.com";
+        String body = "{\"email\":\"" + email + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/deleteAccount")
+                .headers(httpHeaders)
+                .content(body)).andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("DELETED"));
     }
 
     @Test
@@ -183,7 +187,6 @@ class UserControllerTest {
 
     @Test
     void authenticateUser() throws Exception {
-
         String username = "joeBlogs@test.com";
         String password = "testPassword";
 

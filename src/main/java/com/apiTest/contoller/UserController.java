@@ -104,7 +104,8 @@ public class UserController {
     //DELETE ACCOUNT
     @RequestMapping(value = "/users/deleteAccount", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteAccount(@RequestBody UserDTO user){
-        userRepository.deleteById(user.getId());
+        User userToDelete = userRepository.findByEmail(user.getEmail());
+        userRepository.delete(userToDelete);
         return ResponseEntity.ok("DELETED");
     }
 
