@@ -4,6 +4,7 @@ import com.apiTest.config.GmailConfig;
 import com.apiTest.config.MailConfig;
 import com.apiTest.model.User;
 import com.apiTest.model.UserPrincipal;
+import com.apiTest.model.VerificationToken;
 import com.apiTest.repository.UserRepository;
 import com.apiTest.repository.VerificationTokenRepository;
 import com.apiTest.service.GmailService;
@@ -29,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @SpringBootTest
@@ -66,6 +68,7 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     private User user;
+    private User user2;
     private String jwt;
     private HttpHeaders httpHeaders = new HttpHeaders();
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -74,8 +77,10 @@ class UserControllerTest {
     @BeforeEach
     public void setupDatabase(){
         user = new User("Joe", "Blogs", "joeBlogs@test.com", encoder.encode("testPassword"));
+        user2 = new User("Peter", "Parker", "spidey@test.com", encoder.encode("test2password"));
         user.setVerified("true");
         userRepository.save(user);
+        userRepository.save(user2);
         UserPrincipal userPrincipal = new UserPrincipal(user);
         UserDetails userDetails = userPrincipal;
         jwt = jwtUtil.generateToken(userDetails);
@@ -87,6 +92,9 @@ class UserControllerTest {
     public void resetDatabase(){
         List<User> users = userRepository.findAll();
         users.stream().forEach((user) -> userRepository.delete(user));
+
+        List<VerificationToken> tokens = verificationTokenRepository.findAll();
+        tokens.stream().forEach((token) -> verificationTokenRepository.delete(token));
     }
 
     @Test
@@ -216,6 +224,23 @@ class UserControllerTest {
 
     @Test
     void verifyUser() throws Exception {
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user2.getEmail()).getId(), token);
+        verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1440));
+        verificationTokenRepository.save(verificationToken);
+
+        String body = "{\"userId\":\"" + 0 + "\"," + "\"token\":\"" + token + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/auth/verify")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("verified"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.forename").value("Peter"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.surname").value("Parker"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.email").value("spidey@test.com"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.permission").value("USER"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.verified").value("true"));
     }
 
     @Test
