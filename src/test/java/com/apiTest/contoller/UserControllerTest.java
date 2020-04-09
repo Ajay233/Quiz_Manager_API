@@ -245,6 +245,18 @@ class UserControllerTest {
 
     @Test
     void resendToken() throws Exception {
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user2.getEmail()).getId(), token);
+        verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1440));
+        verificationTokenRepository.save(verificationToken);
+
+        String body = "{\"userId\":\"" + 0 + "\"," + "\"token\":\"" + token + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/auth/resendToken")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("RE-ISSUED"));
     }
 
     @Test
