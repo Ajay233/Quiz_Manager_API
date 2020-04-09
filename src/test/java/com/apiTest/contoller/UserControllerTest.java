@@ -6,12 +6,14 @@ import com.apiTest.model.User;
 import com.apiTest.model.UserPrincipal;
 import com.apiTest.repository.UserRepository;
 import com.apiTest.repository.VerificationTokenRepository;
+import com.apiTest.service.GmailService;
 import com.apiTest.service.QuizUserDetailsService;
 import com.apiTest.util.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.List;
 
 
 @SpringBootTest
@@ -49,8 +53,11 @@ class UserControllerTest {
     @Autowired
     private MailConfig mailConfig;
 
-    @Autowired
+    @Mock
     private GmailConfig gmailConfig;
+
+    @Mock
+    private GmailService gmailService;
 
     @Autowired
     ApplicationEventPublisher eventPublisher;
@@ -78,7 +85,8 @@ class UserControllerTest {
 
     @AfterEach
     public void resetDatabase(){
-        userRepository.delete(user);
+        List<User> users = userRepository.findAll();
+        users.stream().forEach((user) -> userRepository.delete(user));
     }
 
     @Test
@@ -175,6 +183,35 @@ class UserControllerTest {
 
     @Test
     void signUpNewUser() throws Exception {
+        String forename = "Wade";
+        String surname = "Wilson";
+        String email = "deadpool@test.com";
+        String password = "deadpoolsPassword";
+
+        String body = "{\"forename\":\"" + forename + "\"," + "\"surname\":\"" + surname + "\"," + "\"email\":\"" + email + "\"," + "\"password\":\"" + password + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/auth/signUp")
+                .header("Content-Type", "application/json")
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Welcome to the quiz app"));
+        Assertions.assertEquals(userRepository.findByEmail("deadpool@test.com").getForename(), forename);
+    }
+
+    @Test
+    void signUpExistingUser() throws Exception {
+        String forename = "Wade";
+        String surname = "Wilson";
+        String email = "JoeBlogs@test.com"; //email already exists
+        String password = "deadpoolsPassword";
+
+        String body = "{\"forename\":\"" + forename + "\"," + "\"surname\":\"" + surname + "\"," + "\"email\":\"" + email + "\"," + "\"password\":\"" + password + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/auth/signUp")
+                .header("Content-Type", "application/json")
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("That email already has an account"));
     }
 
     @Test

@@ -55,6 +55,9 @@ public class UserController {
     private GmailConfig gmailConfig;
 
     @Autowired
+    private GmailService gmailService;
+
+    @Autowired
     ApplicationEventPublisher eventPublisher;
 
 
@@ -120,14 +123,17 @@ public class UserController {
             // Do sign up
             User newUser = new User(user.getForename(), user.getSurname(), user.getEmail(), encoder.encode(user.getPassword()));
             userRepository.save(newUser);
+            System.out.println(user.getForename() + " saved to DB");
 
             // create the token and verificationToken object
             String token = UUID.randomUUID().toString();
+            System.out.println("Token generated");
             VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user.getEmail()).getId(), token);
             verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1));
 
             // save the token to the token table
             verificationTokenRepository.save(verificationToken);
+            System.out.println("Token saved");
 
             // create the message that will go in the email.  will need to include the token
             String message = "Hi " + newUser.getForename() + "\r\n\r\n" + "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:3000/verify?token=" + token;
@@ -137,6 +143,7 @@ public class UserController {
             // Send the token as a link in an email to the user
             new Thread(() -> {
                 try {
+                    System.out.println("In thread");
 //                    MailService mailService = new MailService();
 //                    mailService.composeAndSendEmail(message,
 //                            "ajaymungur@gmail.com",
@@ -144,7 +151,8 @@ public class UserController {
 //                            "Complete your registration",
 //                            mailConfig
 //                    );
-                    GmailService.sendMail("ajaymungurwork@outlook.com", newUser.getForename(), messageTwo, gmailConfig);
+                    gmailService.sendMail("ajaymungurwork@outlook.com", newUser.getForename(), messageTwo, gmailConfig);
+                    System.out.println("Email sent");
                 } catch (MailSendException e) {
                     e.printStackTrace();
                 }
@@ -219,7 +227,7 @@ public class UserController {
 //                        "Complete your registration",
 //                        mailConfig
 //                );
-                GmailService.sendMail("ajaymungurwork@outlook.com", user.getForename(), messageTwo, gmailConfig);
+                gmailService.sendMail("ajaymungurwork@outlook.com", user.getForename(), messageTwo, gmailConfig);
             } catch(MailSendException e){
                 e.printStackTrace();
             }
