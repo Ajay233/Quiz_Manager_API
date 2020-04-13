@@ -1,4 +1,4 @@
-package com.apiTest.contoller;
+package com.apiTest.IntegrationTests.contoller;
 
 import com.apiTest.User.model.User;
 import com.apiTest.User.repository.UserRepository;
