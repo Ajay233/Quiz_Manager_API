@@ -1,6 +1,6 @@
-package com.apiTest.repository;
+package com.apiTest.authentication.repository;
 
-import com.apiTest.model.VerificationToken;
+import com.apiTest.authentication.model.VerificationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

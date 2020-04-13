@@ -1,15 +1,17 @@
-package com.apiTest.contoller;
+package com.apiTest.authentication.controller;
 
+import com.apiTest.User.model.User;
+import com.apiTest.authentication.model.AuthenticationRequest;
+import com.apiTest.authentication.model.AuthenticationResponse;
+import com.apiTest.authentication.model.VerificationResponse;
+import com.apiTest.authentication.model.VerificationToken;
 import com.apiTest.config.GmailConfig;
-import com.apiTest.config.MailConfig;
-import com.apiTest.model.*;
-import com.apiTest.repository.UserRepository;
-import com.apiTest.repository.VerificationTokenRepository;
+import com.apiTest.User.repository.UserRepository;
+import com.apiTest.authentication.repository.VerificationTokenRepository;
 import com.apiTest.service.GmailService;
 import com.apiTest.service.QuizUserDetailsService;
 import com.apiTest.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
 import java.util.Calendar;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
-public class UserController {
+public class AuthenticationController {
 
     @Autowired
     private UserRepository userRepository;
@@ -49,71 +48,13 @@ public class UserController {
     private JwtUtil jwtTokenUtil;
 
     @Autowired
-    private MailConfig mailConfig;
-
-    @Autowired
     private GmailConfig gmailConfig;
 
     @Autowired
     private GmailService gmailService;
 
-    @Autowired
-    ApplicationEventPublisher eventPublisher;
-
-
-    //LIST ALL USERS
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ResponseEntity<?> getAllUsers() throws ServletException, IOException {
-        return new ResponseEntity<List>(userRepository.findAll(), HttpStatus.OK);
-    }
-
-    //EDIT PROFILE DATA (Forename, Surname, Email  ** will need to handle email separately and do another verify **)
-    @RequestMapping(value = "/users/update", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUserData(@RequestBody UserDTO updatedUserData){
-        User user = userRepository.findByEmail(updatedUserData.getEmail());
-        user.setForename(updatedUserData.getForename());
-        user.setSurname(updatedUserData.getSurname());
-        user.setEmail(updatedUserData.getNewEmail());
-        userRepository.save(user);
-        return ResponseEntity.ok("UPDATED");
-    }
-
-    //UPDATE PASSWORD
-    @RequestMapping(value = "/users/updatePassword", method = RequestMethod.PUT)
-    public ResponseEntity<?> updatePassword(@RequestBody UserDTO newDetails){
-
-        User user = userRepository.findByEmail(newDetails.getEmail());
-        if(user == null){
-            return new ResponseEntity<String>("NO MATCH", HttpStatus.NOT_FOUND);
-        }
-        try {
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    newDetails.getEmail(),
-                    newDetails.getPassword()
-                )
-            );
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String updatedPassword = encoder.encode(newDetails.getNewPassword());
-            user.setPassword(updatedPassword);
-            userRepository.save(user);
-            return ResponseEntity.ok("UPDATED");
-        } catch (BadCredentialsException e) {
-            return new ResponseEntity<String>("PASSWORD INCORRECT", HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
-    //DELETE ACCOUNT
-    @RequestMapping(value = "/users/deleteAccount", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteAccount(@RequestBody UserDTO user){
-        User userToDelete = userRepository.findByEmail(user.getEmail());
-        userRepository.delete(userToDelete);
-        return ResponseEntity.ok("DELETED");
-    }
-
     // SIGN UP
-    @RequestMapping(value = "/users/auth/signUp", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/auth/signUp", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> signUpNewUser(@RequestBody User user){
 
         //ADD - validation to check the email is in a valid format, if not return an error response
@@ -164,7 +105,7 @@ public class UserController {
     }
 
     //VERIFY USER'S EMAIL IS REAL
-    @RequestMapping(value = "/users/auth/verify", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth/verify", method = RequestMethod.POST)
     public ResponseEntity<?> verifyUser(@RequestBody VerificationToken token){
         VerificationToken verificationToken;
 
@@ -191,9 +132,8 @@ public class UserController {
         return new ResponseEntity<VerificationResponse>(verificationResponse, HttpStatus.OK);
     }
 
-
     //RESEND ACCOUNT VERIFICATION TOKEN
-    @RequestMapping(value = "/users/auth/resendToken", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth/resendToken", method = RequestMethod.POST)
     public ResponseEntity<?> resendToken(@RequestBody VerificationToken token){
 
         if(verificationTokenRepository.findByToken(token.getToken()) == null){
@@ -235,9 +175,8 @@ public class UserController {
         return ResponseEntity.ok("RE-ISSUED");
     }
 
-
     // LOGIN
-    @RequestMapping(value = "/users/auth/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/auth/login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
         // String verified = userRepository.findByEmail(authenticationRequest.getEmail()).getVerified();

@@ -1,4 +1,4 @@
-package com.apiTest.model;
+package com.apiTest.authentication.model;
 
 public class AuthenticationRequest {
 

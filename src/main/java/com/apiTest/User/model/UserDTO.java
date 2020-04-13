@@ -1,4 +1,4 @@
-package com.apiTest.model;
+package com.apiTest.User.model;
 
 import lombok.Data;
 

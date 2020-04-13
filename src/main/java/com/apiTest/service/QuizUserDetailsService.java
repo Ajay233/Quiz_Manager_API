@@ -1,8 +1,8 @@
 package com.apiTest.service;
 
-import com.apiTest.model.User;
-import com.apiTest.model.UserPrincipal;
-import com.apiTest.repository.UserRepository;
+import com.apiTest.User.model.User;
+import com.apiTest.authentication.model.UserPrincipal;
+import com.apiTest.User.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

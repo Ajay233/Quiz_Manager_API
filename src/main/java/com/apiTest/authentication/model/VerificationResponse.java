@@ -1,5 +1,6 @@
-package com.apiTest.model;
+package com.apiTest.authentication.model;
 
+import com.apiTest.User.model.User;
 import org.springframework.http.HttpStatus;
 
 public class VerificationResponse {

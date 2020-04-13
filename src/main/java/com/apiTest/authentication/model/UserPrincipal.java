@@ -1,5 +1,6 @@
-package com.apiTest.model;
+package com.apiTest.authentication.model;
 
+import com.apiTest.User.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

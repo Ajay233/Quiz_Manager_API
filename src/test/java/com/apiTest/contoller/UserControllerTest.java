@@ -1,12 +1,12 @@
 package com.apiTest.contoller;
 
+import com.apiTest.User.model.User;
+import com.apiTest.User.repository.UserRepository;
+import com.apiTest.authentication.model.UserPrincipal;
+import com.apiTest.authentication.model.VerificationToken;
+import com.apiTest.authentication.repository.VerificationTokenRepository;
 import com.apiTest.config.GmailConfig;
 import com.apiTest.config.MailConfig;
-import com.apiTest.model.User;
-import com.apiTest.model.UserPrincipal;
-import com.apiTest.model.VerificationToken;
-import com.apiTest.repository.UserRepository;
-import com.apiTest.repository.VerificationTokenRepository;
 import com.apiTest.service.GmailService;
 import com.apiTest.service.QuizUserDetailsService;
 import com.apiTest.util.JwtUtil;
@@ -18,7 +18,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,7 +29,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
-import java.util.UUID;
 
 
 @SpringBootTest
@@ -61,8 +59,9 @@ class UserControllerTest {
     @Mock
     private GmailService gmailService;
 
-    @Autowired
-    ApplicationEventPublisher eventPublisher;
+//    This will be needed if I implement calling services when events fire
+//    @Autowired
+//    ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private MockMvc mockMvc;
@@ -141,7 +140,7 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("UPDATED"));
 
         // Then attempt login with the new password
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                 .header("Content-Type", "application/json")
                 .content(authBody))
                 .andDo(MockMvcResultHandlers.print())
@@ -187,98 +186,6 @@ class UserControllerTest {
                 .headers(httpHeaders)
                 .content(body)).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("DELETED"));
-    }
-
-    @Test
-    void signUpNewUser() throws Exception {
-        String forename = "Wade";
-        String surname = "Wilson";
-        String email = "deadpool@test.com";
-        String password = "deadpoolsPassword";
-
-        String body = "{\"forename\":\"" + forename + "\"," + "\"surname\":\"" + surname + "\"," + "\"email\":\"" + email + "\"," + "\"password\":\"" + password + "\"}";
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/auth/signUp")
-                .header("Content-Type", "application/json")
-                .content(body))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Welcome to the quiz app"));
-        Assertions.assertEquals(userRepository.findByEmail("deadpool@test.com").getForename(), forename);
-    }
-
-    @Test
-    void signUpExistingUser() throws Exception {
-        String forename = "Wade";
-        String surname = "Wilson";
-        String email = "JoeBlogs@test.com"; //email already exists
-        String password = "deadpoolsPassword";
-
-        String body = "{\"forename\":\"" + forename + "\"," + "\"surname\":\"" + surname + "\"," + "\"email\":\"" + email + "\"," + "\"password\":\"" + password + "\"}";
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/auth/signUp")
-                .header("Content-Type", "application/json")
-                .content(body))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("That email already has an account"));
-    }
-
-    @Test
-    void verifyUser() throws Exception {
-        String token = UUID.randomUUID().toString();
-        VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user2.getEmail()).getId(), token);
-        verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1440));
-        verificationTokenRepository.save(verificationToken);
-
-        String body = "{\"userId\":\"" + 0 + "\"," + "\"token\":\"" + token + "\"}";
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/auth/verify")
-                .headers(httpHeaders)
-                .content(body))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("verified"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.forename").value("Peter"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.surname").value("Parker"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.email").value("spidey@test.com"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.permission").value("USER"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.verified").value("true"));
-    }
-
-    @Test
-    void resendToken() throws Exception {
-        String token = UUID.randomUUID().toString();
-        VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user2.getEmail()).getId(), token);
-        verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1440));
-        verificationTokenRepository.save(verificationToken);
-
-        String body = "{\"userId\":\"" + 0 + "\"," + "\"token\":\"" + token + "\"}";
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/users/auth/resendToken")
-                .headers(httpHeaders)
-                .content(body))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("RE-ISSUED"));
-    }
-
-    @Test
-    void authenticateUser() throws Exception {
-        String username = "joeBlogs@test.com";
-        String password = "testPassword";
-
-        String body = "{\"email\":\"" + username + "\"," + "\"password\":\"" + password + "\"}";
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/users/auth/login")
-                .header("Content-Type", "application/json")
-                .content(body))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.jwt").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.forename").value("Joe"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.surname").value("Blogs"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.email").value("joeBlogs@test.com"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.password").value(""))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.permission").value("USER"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.verified").value("true"));
     }
 
 }
