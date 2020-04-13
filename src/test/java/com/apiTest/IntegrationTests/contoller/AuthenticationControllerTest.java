@@ -126,12 +126,11 @@ public class AuthenticationControllerTest {
 
     @Test
     void verifyUser() throws Exception {
-        String token = UUID.randomUUID().toString();
-        VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user2.getEmail()).getId(), token);
-        verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1440));
+        VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user2.getEmail()).getId());
+//        verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1440));
         verificationTokenRepository.save(verificationToken);
 
-        String body = "{\"userId\":\"" + 0 + "\"," + "\"token\":\"" + token + "\"}";
+        String body = "{\"userId\":\"" + 0 + "\"," + "\"token\":\"" + verificationToken.getToken() + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/verify")
                 .headers(httpHeaders)
@@ -148,11 +147,11 @@ public class AuthenticationControllerTest {
     @Test
     void resendToken() throws Exception {
         String token = UUID.randomUUID().toString();
-        VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user2.getEmail()).getId(), token);
-        verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1440));
+        VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user2.getEmail()).getId());
+//        verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1440));
         verificationTokenRepository.save(verificationToken);
 
-        String body = "{\"userId\":\"" + 0 + "\"," + "\"token\":\"" + token + "\"}";
+        String body = "{\"userId\":\"" + 0 + "\"," + "\"token\":\"" + verificationToken.getToken() + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/resendToken")
                 .headers(httpHeaders)

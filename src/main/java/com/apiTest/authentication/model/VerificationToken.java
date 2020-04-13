@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -31,9 +32,15 @@ public class VerificationToken {
 
     public VerificationToken(){}
 
-    public VerificationToken(Long userId, String token){
+    public VerificationToken(Long userId){
         this.userId = userId;
-        this.token = token;
+        this.token = this.createToken();
+        this.expiryDate = this.calcExpiryTime(1440);
+    }
+
+    public String createToken(){
+        String token = UUID.randomUUID().toString();
+        return token;
     }
 
     public Long getId() {

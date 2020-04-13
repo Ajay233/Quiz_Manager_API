@@ -1,13 +1,13 @@
 package com.apiTest.authentication.controller;
 
 import com.apiTest.User.model.User;
+import com.apiTest.User.repository.UserRepository;
 import com.apiTest.authentication.model.AuthenticationRequest;
 import com.apiTest.authentication.model.AuthenticationResponse;
 import com.apiTest.authentication.model.VerificationResponse;
 import com.apiTest.authentication.model.VerificationToken;
-import com.apiTest.config.GmailConfig;
-import com.apiTest.User.repository.UserRepository;
 import com.apiTest.authentication.repository.VerificationTokenRepository;
+import com.apiTest.config.GmailConfig;
 import com.apiTest.service.GmailService;
 import com.apiTest.service.QuizUserDetailsService;
 import com.apiTest.util.JwtUtil;
@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Calendar;
-import java.util.UUID;
 
 @RestController
 public class AuthenticationController {
@@ -64,21 +63,18 @@ public class AuthenticationController {
             // Do sign up
             User newUser = new User(user.getForename(), user.getSurname(), user.getEmail(), encoder.encode(user.getPassword()));
             userRepository.save(newUser);
-            System.out.println(user.getForename() + " saved to DB");
 
             // create the token and verificationToken object
-            String token = UUID.randomUUID().toString();
-            System.out.println("Token generated");
-            VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user.getEmail()).getId(), token);
-            verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1));
+//            String token = UUID.randomUUID().toString();
+            VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user.getEmail()).getId());
+            verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1)); // override the default time
 
             // save the token to the token table
             verificationTokenRepository.save(verificationToken);
-            System.out.println("Token saved");
 
             // create the message that will go in the email.  will need to include the token
-            String message = "Hi " + newUser.getForename() + "\r\n\r\n" + "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:3000/verify?token=" + token;
-            String messageTwo = "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:3000/verify?token=" + token;
+            String message = "Hi " + newUser.getForename() + "\r\n\r\n" + "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:3000/verify?token=" + verificationToken.getToken();
+            String messageTwo = "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:3000/verify?token=" + verificationToken.getToken();
 
             // Start a new thread so the user can be informed that their account has been successfully created
             // Send the token as a link in an email to the user
@@ -147,11 +143,11 @@ public class AuthenticationController {
         verificationTokenRepository.delete(verificationToken);
 
         //Create a new token
-        String newToken = UUID.randomUUID().toString();
+//        String newToken = UUID.randomUUID().toString();
 
         // save the token to a verificationToken object and then save to the token table
-        VerificationToken replacementToken = new VerificationToken(userRepository.findByEmail(user.getEmail()).getId(), newToken);
-        replacementToken.setExpiryDate(verificationToken.calcExpiryTime(1440));
+        VerificationToken replacementToken = new VerificationToken(userRepository.findByEmail(user.getEmail()).getId());
+        System.out.println(replacementToken.getExpiryDate());
         verificationTokenRepository.save(replacementToken);
 
         // create the message that will go in the email
