@@ -5,10 +5,9 @@ import com.apiTest.Quiz.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class QuizController {
@@ -33,6 +32,16 @@ public class QuizController {
             return ResponseEntity.ok("DELETED");
         } else {
             return new ResponseEntity<String>("MISSING DETAILS", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/quiz/findByCategory", method = RequestMethod.GET)
+    private ResponseEntity<?> getQuizesByCategory(@RequestBody String category){
+        List<Quiz> quizes = quizRepository.findByCategory(category);
+        if(quizes.size() != 0){
+            return new ResponseEntity<List>(quizes, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("CATEGORY DOES NOT EXIST", HttpStatus.BAD_REQUEST);
         }
     }
 
