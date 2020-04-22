@@ -14,7 +14,14 @@ The aim of this mini project was to try to create a back end API that will allow
 The app makes use of of development and test databases which are built and run in Docker containers so you won't need to
 download and set up MySQL and MySQL server.  You will however need to download Docker from: https://www.docker.com/products/docker-desktop
 
-### Setting up the `dev` properties file
+You will also need maven installed in order to run the app later on.  To check if you have maven installed, try running
+`mvn -version` in the command line.  If you have maven installed you will see the version details returned.  If not you can
+install maven by running: `brew install maven`
+
+### 1. Fork this repository
+First you will need to fork this repository so that you can clone the forked repo to your own machine.
+
+### 2. Setting up the `dev` properties file
 
 Next you will need to update a number of properties files.  The following properties have been partially filled in but
 you will complete them in the `application-dev.properties` file:
@@ -55,7 +62,7 @@ Once you have done this, you can set the key for the property below
 - spring.datasource.secretKey= `A secret key of your choice`
 
 
-### Setting up the `test` properties
+### 4. Setting up the `test` properties
 
 In order to finish off the set up, you will need to apply the same details as above to the `application-test.properties`
 file in: `src/test/resources/application-test.properties`
@@ -73,7 +80,7 @@ the `application-ci.properties` file so that CircleCI can set up its own version
 
 ### 1. Docker
 
-Open up the command line and enter the following command:
+In the command line and enter the following command:
 
 `docker-compose up -d`
 
