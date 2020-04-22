@@ -89,8 +89,10 @@ Next, enter the following command:
 
 This will build and run the app.  If you see the following lines, the app will be up and running:
 
-```2020-04-21 21:38:49.424  INFO 31889 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
-   2020-04-21 21:38:49.426  INFO 31889 --- [           main] com.apiTest.ApiTestApplication           : Started ApiTestApplication in 19.429 seconds (JVM running for 19.713)```
+```
+2020-04-21 21:38:49.424  INFO 31889 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2020-04-21 21:38:49.426  INFO 31889 --- [           main] com.apiTest.ApiTestApplication           : Started ApiTestApplication in 19.429 seconds (JVM running for 19.713)
+```
 
 
 ## Viewing endpoints in Swagger
