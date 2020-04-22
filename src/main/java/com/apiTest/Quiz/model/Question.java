@@ -5,14 +5,15 @@ import lombok.Data;
 @Data
 public class Question {
 
-    private Long questionId;
+    private Long id;
     private Long quizId;
     private int questionNumber;
     private String description;
 
     public Question(){}
 
-    public Question(int questionNumber, String description){
+    public Question(Long quizId, int questionNumber, String description){
+        this.quizId = quizId;
         this.questionNumber = questionNumber;
         this.description = description;
     }
