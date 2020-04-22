@@ -88,5 +88,17 @@ public class QuizControllerTest {
         Assertions.assertNotNull(quizRepository.findByName(quiz4.getName()));
     }
 
+    @Test
+    public void deleteQuizTest() throws Exception {
+        Quiz quiz2FromDB = quizRepository.findByName(quiz2.getName());
+        String body = "{\"id\":\"" + quiz2FromDB.getId() + "\"," +  "\"name\":\"" + quiz2FromDB.getName() + "\"," + "\"description\":\"" + quiz2FromDB.getDescription() + "\"," + "\"category\":\"" + quiz2FromDB.getCategory() + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/quiz/delete")
+                .headers(httpHeaders).content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("DELETED"));
+
+        Assertions.assertNull(quizRepository.findByName(quiz2.getName()));
+    }
 
 }
