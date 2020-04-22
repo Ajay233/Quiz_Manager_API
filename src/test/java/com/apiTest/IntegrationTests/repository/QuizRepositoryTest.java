@@ -53,4 +53,10 @@ public class QuizRepositoryTest {
         Assertions.assertEquals(quizRepository.findByCategory("test"), quizes);
     }
 
+    @Test
+    public void deleteTest(){
+        quizRepository.delete(quiz2);
+        Assertions.assertEquals(quizRepository.findByName(quiz2.getName()), null);
+    }
+
 }

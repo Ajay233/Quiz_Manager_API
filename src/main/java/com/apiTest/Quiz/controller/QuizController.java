@@ -26,4 +26,14 @@ public class QuizController {
         }
     }
 
+    @RequestMapping(value = "/quiz/delete", method = RequestMethod.DELETE)
+    private ResponseEntity<?> deleteQuiz(@RequestBody Quiz quiz){
+        if(quiz.getName() != null && quiz.getDescription() != null && quiz.getCategory() != null) {
+            quizRepository.delete(quiz);
+            return ResponseEntity.ok("DELETED");
+        } else {
+            return new ResponseEntity<String>("MISSING DETAILS", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
