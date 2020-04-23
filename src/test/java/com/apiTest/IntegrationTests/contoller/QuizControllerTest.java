@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -99,6 +100,31 @@ public class QuizControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("DELETED"));
 
         Assertions.assertNull(quizRepository.findByName(quiz2.getName()));
+    }
+
+    @Test
+    public void getQuizByCategoryTest() throws Exception {
+        String category = "Test";
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/quiz/findByCategory")
+                .headers(httpHeaders)
+                .content(category))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].name").value("quiz3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].description").value("Test of quiz3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].category").value("Test"));
+    }
+
+    @Test
+    public void getAllQuizesTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/quiz/getAll")
+                .headers(httpHeaders))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].name").value("quiz2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].description").value("Test of quiz2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].category").value("NotTest"));
     }
 
 }
