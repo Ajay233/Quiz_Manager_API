@@ -141,4 +141,21 @@ public class QuizControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].category").value(quiz2FromDB.getCategory()));
     }
 
+    @Test
+    public void updateQuizDetailsTest() throws Exception {
+        Long quiz2Id = quizRepository.findByName(quiz2.getName()).get(0).getId();
+        Quiz updatedQuiz2 = new Quiz("updatedQuiz2", "Test of quiz2 after update", "NotTest");
+        updatedQuiz2.setId(quiz2Id);
+
+        String body = "{\"id\":\"" + updatedQuiz2.getId() + "\"," +  "\"name\":\"" + updatedQuiz2.getName() + "\"," + "\"description\":\"" + updatedQuiz2.getDescription() + "\"," + "\"category\":\"" + updatedQuiz2.getCategory() + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/quiz/update")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("UPDATED"));
+
+        Assertions.assertEquals(quizRepository.findById(quiz2Id).get(), updatedQuiz2);
+    }
+
 }

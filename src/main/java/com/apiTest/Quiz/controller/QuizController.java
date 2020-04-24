@@ -64,4 +64,14 @@ public class QuizController {
         }
     }
 
+    @RequestMapping(value = "/quiz/update", method = RequestMethod.PUT)
+    private  ResponseEntity<?> updateQuizDetails(@RequestBody Quiz quiz){
+        if(quizRepository.findById(quiz.getId()).get() != null){
+            quizRepository.save(quiz);
+            return ResponseEntity.ok("UPDATED");
+        } else {
+            return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
