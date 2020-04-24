@@ -2,6 +2,7 @@ package com.apiTest.Quiz.controller;
 
 import com.apiTest.Quiz.model.Quiz;
 import com.apiTest.Quiz.repository.QuizRepository;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +28,13 @@ public class QuizController {
 
     @RequestMapping(value = "/quiz/delete", method = RequestMethod.DELETE)
     private ResponseEntity<?> deleteQuiz(@RequestBody Quiz quiz){
-        if(quiz.getName() != null && quiz.getDescription() != null && quiz.getCategory() != null) {
-            quizRepository.delete(quiz);
-            return ResponseEntity.ok("DELETED");
+        if(quiz.getId() != null && quiz.getName() != null && quiz.getDescription() != null && quiz.getCategory() != null) {
+            if(quizRepository.findById(quiz.getId()) != null){
+                quizRepository.delete(quiz);
+                return ResponseEntity.ok("DELETED");
+            } else {
+                return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
+            }
         } else {
             return new ResponseEntity<String>("MISSING DETAILS", HttpStatus.BAD_REQUEST);
         }
@@ -47,6 +52,15 @@ public class QuizController {
             return new ResponseEntity<List>(quizes, HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("CATEGORY DOES NOT EXIST", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/quiz/findByName", method = RequestMethod.GET)
+    private ResponseEntity<?> getQuizByName(@RequestBody String name) throws JwtException {
+        if(!quizRepository.findByName(name).isEmpty()){
+            return new ResponseEntity<List>(quizRepository.findByName(name), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
         }
     }
 

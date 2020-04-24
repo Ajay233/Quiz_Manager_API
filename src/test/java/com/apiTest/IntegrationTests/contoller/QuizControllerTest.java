@@ -91,7 +91,7 @@ public class QuizControllerTest {
 
     @Test
     public void deleteQuizTest() throws Exception {
-        Quiz quiz2FromDB = quizRepository.findByName(quiz2.getName());
+        Quiz quiz2FromDB = quizRepository.findByName(quiz2.getName()).get(0);
         String body = "{\"id\":\"" + quiz2FromDB.getId() + "\"," +  "\"name\":\"" + quiz2FromDB.getName() + "\"," + "\"description\":\"" + quiz2FromDB.getDescription() + "\"," + "\"category\":\"" + quiz2FromDB.getCategory() + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/quiz/delete")
@@ -99,7 +99,7 @@ public class QuizControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("DELETED"));
 
-        Assertions.assertNull(quizRepository.findByName(quiz2.getName()));
+        Assertions.assertTrue(quizRepository.findByName(quiz2.getName()).isEmpty());
     }
 
     @Test
@@ -125,6 +125,20 @@ public class QuizControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[1].name").value("quiz2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[1].description").value("Test of quiz2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[1].category").value("NotTest"));
+    }
+
+    @Test
+    public void getQuizByName() throws Exception {
+        Quiz quiz2FromDB = quizRepository.findByName(quiz2.getName()).get(0);
+        mockMvc.perform(MockMvcRequestBuilders.get("/quiz/findByName")
+                .headers(httpHeaders)
+                .content("quiz2"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id").value(quiz2FromDB.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].name").value(quiz2FromDB.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].description").value(quiz2FromDB.getDescription()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].category").value(quiz2FromDB.getCategory()));
     }
 
 }

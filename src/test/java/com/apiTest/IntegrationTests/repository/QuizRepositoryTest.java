@@ -41,7 +41,7 @@ public class QuizRepositoryTest {
 
     @Test
     public void findByNameTest(){
-        Assertions.assertEquals(quizRepository.findByName(quiz1.getName()), quiz1);
+        Assertions.assertEquals(quizRepository.findByName(quiz1.getName()).get(0), quiz1);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class QuizRepositoryTest {
     @Test
     public void deleteTest(){
         quizRepository.delete(quiz2);
-        Assertions.assertEquals(quizRepository.findByName(quiz2.getName()), null);
+        Assertions.assertTrue(quizRepository.findByName(quiz2.getName()).isEmpty());
     }
 
 }
