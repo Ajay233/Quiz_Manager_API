@@ -17,7 +17,7 @@ public class QuestionValidator {
     public List<Question> validateQuestion(List<Question> questions){
        List<Question> nonMatches;
        nonMatches = questions.stream()
-               .filter((question) -> questionRepository.findById(question.getId()).get() == null)
+               .filter((question) -> questionRepository.existsById(question.getId()) == false)
                .collect(Collectors.toList());
         return nonMatches;
     }

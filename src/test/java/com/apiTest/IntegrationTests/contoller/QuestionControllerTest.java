@@ -129,4 +129,17 @@ public class QuestionControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("UPDATED"));
     }
 
+    @Test
+    public void deleteQuestionsTest() throws Exception {
+        String body = "[{\"id\":\"" + "3" + "\"," + "\"quizId\":\"" + question3.getQuizId() + "\"," + "\"questionNumber\":\"" + question3.getQuestionNumber() + "\"," + "\"description\":\"" + question3.getDescription() + "\"}]";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/question/delete")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("DELETED"));
+
+        Assertions.assertFalse(questionRepository.existsById((long) 3));
+    }
+
 }

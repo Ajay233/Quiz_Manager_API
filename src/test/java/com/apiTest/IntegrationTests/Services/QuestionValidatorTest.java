@@ -58,26 +58,23 @@ public class QuestionValidatorTest {
     @Test
     public void validateQuestionsTest() {
 
-        // Needs improving to use a try catch block to catch the 'NoSuchElementException: No value present'
-        // error when there is no corresponding record in the DB
-
-//        Question dudQuestion1 = new Question((long) 10, 1, "Dud question");
-//        Question dudQuestion2 = new Question((long) 10, 2, "Dud question2");
-//        dudQuestion1.setId((long) 7);
-//        dudQuestion2.setId((long) 8);
-//        List<Question> invalidQuestions;
-//        invalidQuestions = questionRepository.findByQuizId((long) 3);
-//        invalidQuestions.add(dudQuestion1);
-//        invalidQuestions.add(dudQuestion2);
+        Question dudQuestion1 = new Question((long) 10, 1, "Dud question");
+        Question dudQuestion2 = new Question((long) 10, 2, "Dud question2");
+        dudQuestion1.setId((long) 7);
+        dudQuestion2.setId((long) 8);
+        List<Question> invalidQuestions;
+        invalidQuestions = questionRepository.findByQuizId((long) 3);
+        invalidQuestions.add(dudQuestion1);
+        invalidQuestions.add(dudQuestion2);
 
         List<Question> questions;
         questions = questionValidator.validateQuestion(questionRepository.findByQuizId((long) 1));
 
-//        List<Question> filteredQuestions;
-//        filteredQuestions = questionValidator.validateQuestion(invalidQuestions);
+        List<Question> filteredQuestions;
+        filteredQuestions = questionValidator.validateQuestion(invalidQuestions);
 
         Assertions.assertTrue(questions.isEmpty());
-//        Assertions.assertEquals(filteredQuestions.size(), 2);
+        Assertions.assertEquals(filteredQuestions.size(), 2);
 
     }
 

@@ -42,7 +42,7 @@ public class QuestionController {
     }
 
     @RequestMapping(value = "/question/update", method = RequestMethod.PUT)
-    private ResponseEntity<?> updateQuestion(@RequestBody List<Question> questions){
+    private ResponseEntity<?> updateQuestions(@RequestBody List<Question> questions){
 
         List<Question> nonValidQuestions = questionValidator.validateQuestion(questions);
 
@@ -54,6 +54,16 @@ public class QuestionController {
         }
     }
 
-    //Delete
+    @RequestMapping(value = "/question/delete", method = RequestMethod.DELETE)
+    private ResponseEntity<?> deleteQuestions(@RequestBody List<Question> questions){
+        List<Question> nonValidQuestions = questionValidator.validateQuestion(questions);
+
+        if(nonValidQuestions.isEmpty()) {
+            questions.stream().forEach((question) -> questionRepository.delete(question));
+            return ResponseEntity.ok("DELETED");
+        } else {
+            return new ResponseEntity<String>("INVALID QUESTIONS PROVIDED", HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }
