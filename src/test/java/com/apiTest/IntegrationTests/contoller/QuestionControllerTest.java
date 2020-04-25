@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -110,6 +111,17 @@ public class QuestionControllerTest {
         Assertions.assertEquals(savedQuestion.getQuizId(), question4.getQuizId());
         Assertions.assertEquals(savedQuestion.getQuestionNumber(), question4.getQuestionNumber());
         Assertions.assertEquals(savedQuestion.getDescription(), question4.getDescription());
+    }
+
+    @Test
+    public void getQuestionsByQuizIdTest() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/question/findByQuizId")
+                .headers(httpHeaders)
+                .content("1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].description").value("test question number 1 for quiz1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].description").value("test question number 2 for quiz1"));
     }
 
 }

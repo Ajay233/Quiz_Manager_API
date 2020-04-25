@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class QuestionController {
 
@@ -23,6 +25,15 @@ public class QuestionController {
             return ResponseEntity.ok("CREATED");
         } else {
             return new ResponseEntity<String>("MISSING FIELDS", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/question/findByQuizId", method = RequestMethod.GET)
+    private ResponseEntity<?> getQuestionsByQuizId(@RequestBody Long quizId){
+        if(!questionRepository.findByQuizId(quizId).isEmpty()){
+            return new ResponseEntity<List>(questionRepository.findByQuizId(quizId), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
         }
     }
 

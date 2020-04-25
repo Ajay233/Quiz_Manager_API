@@ -3,12 +3,11 @@ package com.apiTest.IntegrationTests.repository;
 import com.apiTest.Quiz.model.Question;
 import com.apiTest.Quiz.repository.QuestionRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 @SpringBootTest
 public class QuestionRepositoryTest {
@@ -32,18 +31,17 @@ public class QuestionRepositoryTest {
 
     @AfterEach
     public void resetDatabase(){
-        List<Question> questions = questionRepository.findAll();
-        questions.stream().forEach((question) -> questionRepository.delete(question));
+//        List<Question> questions = questionRepository.findAll();
+//        questions.stream().forEach((question) -> questionRepository.delete(question));
 
         questionRepository.truncateTable();
     }
 
     @Test
     public void findByQuizIdTest(){
-//        System.out.println(questionRepository.findByQuizId((long) 1));
-//        Assertions.assertEquals(questionRepository.findByQuizId((long) 1).size(), 2);
-//        Assertions.assertEquals(questionRepository.findByQuizId((long) 1).get(0).getDescription(), question1.getDescription());
-//        Assertions.assertEquals(questionRepository.findByQuizId((long) 1).get(1).getDescription(), question3.getDescription());
+        Assertions.assertEquals(questionRepository.findByQuizId((long) 1).size(), 2);
+        Assertions.assertEquals(questionRepository.findByQuizId((long) 1).get(0).getDescription(), question1.getDescription());
+        Assertions.assertEquals(questionRepository.findByQuizId((long) 1).get(1).getDescription(), question3.getDescription());
     }
 
 }
