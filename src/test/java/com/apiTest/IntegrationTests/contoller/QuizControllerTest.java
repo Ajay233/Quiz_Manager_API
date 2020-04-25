@@ -21,8 +21,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.List;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 public class QuizControllerTest {
@@ -69,10 +67,12 @@ public class QuizControllerTest {
 
     @AfterEach
     public void resetDatabase(){
-        List<Quiz> quizes = quizRepository.findAll();
-        quizes.stream().forEach((quiz) -> quizRepository.delete(quiz));
-
-        userRepository.delete(user);
+//        List<Quiz> quizes = quizRepository.findAll();
+//        quizes.stream().forEach((quiz) -> quizRepository.delete(quiz));
+//
+//        userRepository.delete(user);
+        quizRepository.truncateTable();
+        userRepository.truncateTable();
     }
 
     @Test

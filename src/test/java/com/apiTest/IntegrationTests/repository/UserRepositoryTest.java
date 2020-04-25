@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.List;
-
 @SpringBootTest
 public class UserRepositoryTest {
 
@@ -32,8 +30,9 @@ public class UserRepositoryTest {
 
     @AfterEach
     public void resetDatabase() {
-        List<User> users = userRepository.findAll();
-        users.stream().forEach((user) -> userRepository.delete(user));
+//        List<User> users = userRepository.findAll();
+//        users.stream().forEach((user) -> userRepository.delete(user));
+        userRepository.truncateTable();
     }
 
     @Test

@@ -27,7 +27,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
@@ -84,11 +83,13 @@ public class AuthenticationControllerTest {
 
     @AfterEach
     public void resetDatabase(){
-        List<User> users = userRepository.findAll();
-        users.stream().forEach((user) -> userRepository.delete(user));
-
-        List<VerificationToken> tokens = verificationTokenRepository.findAll();
-        tokens.stream().forEach((token) -> verificationTokenRepository.delete(token));
+//        List<User> users = userRepository.findAll();
+//        users.stream().forEach((user) -> userRepository.delete(user));
+//
+//        List<VerificationToken> tokens = verificationTokenRepository.findAll();
+//        tokens.stream().forEach((token) -> verificationTokenRepository.delete(token));
+        userRepository.truncateTable();
+        verificationTokenRepository.truncateMyTable();
     }
 
     @Test

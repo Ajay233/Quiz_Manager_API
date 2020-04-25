@@ -3,7 +3,6 @@ package com.apiTest.IntegrationTests.contoller;
 import com.apiTest.User.model.User;
 import com.apiTest.User.repository.UserRepository;
 import com.apiTest.authentication.model.UserPrincipal;
-import com.apiTest.authentication.model.VerificationToken;
 import com.apiTest.authentication.repository.VerificationTokenRepository;
 import com.apiTest.config.GmailConfig;
 import com.apiTest.config.MailConfig;
@@ -27,8 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.util.List;
 
 
 @SpringBootTest
@@ -89,11 +86,13 @@ class UserControllerTest {
 
     @AfterEach
     public void resetDatabase(){
-        List<User> users = userRepository.findAll();
-        users.stream().forEach((user) -> userRepository.delete(user));
-
-        List<VerificationToken> tokens = verificationTokenRepository.findAll();
-        tokens.stream().forEach((token) -> verificationTokenRepository.delete(token));
+//        List<User> users = userRepository.findAll();
+//        users.stream().forEach((user) -> userRepository.delete(user));
+//
+//        List<VerificationToken> tokens = verificationTokenRepository.findAll();
+//        tokens.stream().forEach((token) -> verificationTokenRepository.delete(token));
+        userRepository.truncateTable();
+        verificationTokenRepository.truncateMyTable();
     }
 
     @Test

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootTest
 public class QuizRepositoryTest {
@@ -35,8 +34,9 @@ public class QuizRepositoryTest {
 
     @AfterEach
     public void resetDatabase(){
-        List<Quiz> quizes = quizRepository.findAll();
-        quizes.stream().forEach((quiz) -> quizRepository.delete(quiz));
+//        List<Quiz> quizes = quizRepository.findAll();
+////        quizes.stream().forEach((quiz) -> quizRepository.delete(quiz));
+        quizRepository.truncateTable();
     }
 
     @Test

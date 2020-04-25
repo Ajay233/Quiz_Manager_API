@@ -13,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @SpringBootTest
 public class VerificationTokenRepositoryTest {
@@ -40,8 +39,9 @@ public class VerificationTokenRepositoryTest {
 
     @AfterEach
     public void resetDatabase(){
-        List<VerificationToken> tokens = verificationTokenRepository.findAll();
-        tokens.stream().forEach((token) -> verificationTokenRepository.delete(token));
+//        List<VerificationToken> tokens = verificationTokenRepository.findAll();
+//        tokens.stream().forEach((token) -> verificationTokenRepository.delete(token));
+        verificationTokenRepository.truncateMyTable();
     }
 
     @Test
