@@ -31,9 +31,6 @@ public class QuestionRepositoryTest {
 
     @AfterEach
     public void resetDatabase(){
-//        List<Question> questions = questionRepository.findAll();
-//        questions.stream().forEach((question) -> questionRepository.delete(question));
-
         questionRepository.truncateTable();
     }
 

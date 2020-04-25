@@ -86,11 +86,6 @@ class UserControllerTest {
 
     @AfterEach
     public void resetDatabase(){
-//        List<User> users = userRepository.findAll();
-//        users.stream().forEach((user) -> userRepository.delete(user));
-//
-//        List<VerificationToken> tokens = verificationTokenRepository.findAll();
-//        tokens.stream().forEach((token) -> verificationTokenRepository.delete(token));
         userRepository.truncateTable();
         verificationTokenRepository.truncateMyTable();
     }

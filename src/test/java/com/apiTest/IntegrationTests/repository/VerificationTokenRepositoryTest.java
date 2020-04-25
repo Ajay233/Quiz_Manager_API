@@ -39,8 +39,6 @@ public class VerificationTokenRepositoryTest {
 
     @AfterEach
     public void resetDatabase(){
-//        List<VerificationToken> tokens = verificationTokenRepository.findAll();
-//        tokens.stream().forEach((token) -> verificationTokenRepository.delete(token));
         verificationTokenRepository.truncateMyTable();
     }
 

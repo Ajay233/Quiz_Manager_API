@@ -83,13 +83,6 @@ public class QuestionControllerTest {
 
     @AfterEach
     public void resetDatabase(){
-//        List<Question> questions = questionRepository.findAll();
-//        questions.stream().forEach((question) -> questionRepository.delete(question));
-//
-//        List<Quiz> quizes = quizRepository.findAll();
-//        quizes.stream().forEach((quiz) -> quizRepository.delete(quiz));
-//
-//        userRepository.delete(user);
         questionRepository.truncateTable();
         quizRepository.truncateTable();
         userRepository.truncateTable();
@@ -122,6 +115,18 @@ public class QuestionControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].description").value("test question number 1 for quiz1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[1].description").value("test question number 2 for quiz1"));
+    }
+
+    @Test
+    public void updateQuestionsTest() throws Exception {
+        Question updatedQuestion3 = new Question((long) 1, 3, "Test question number 3 for quiz1");
+        String body = "[{\"id\":\"" + "3" + "\"," + "\"quizId\":\"" + updatedQuestion3.getQuizId() + "\"," + "\"questionNumber\":\"" + updatedQuestion3.getQuestionNumber() + "\"," + "\"description\":\"" + updatedQuestion3.getDescription() + "\"}]";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/question/update")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("UPDATED"));
     }
 
 }

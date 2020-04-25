@@ -34,8 +34,6 @@ public class QuizRepositoryTest {
 
     @AfterEach
     public void resetDatabase(){
-//        List<Quiz> quizes = quizRepository.findAll();
-////        quizes.stream().forEach((quiz) -> quizRepository.delete(quiz));
         quizRepository.truncateTable();
     }
 

@@ -2,6 +2,7 @@ package com.apiTest.Quiz.controller;
 
 import com.apiTest.Quiz.model.Question;
 import com.apiTest.Quiz.repository.QuestionRepository;
+import com.apiTest.Quiz.service.QuestionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,9 @@ public class QuestionController {
 
     @Autowired
     QuestionRepository questionRepository;
+
+    @Autowired
+    QuestionValidator questionValidator;
 
     @RequestMapping(value = "/question/create", method = RequestMethod.POST)
     private ResponseEntity<?> createQuestion(@RequestBody Question question){
@@ -36,5 +40,20 @@ public class QuestionController {
             return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
         }
     }
+
+    @RequestMapping(value = "/question/update", method = RequestMethod.PUT)
+    private ResponseEntity<?> updateQuestion(@RequestBody List<Question> questions){
+
+        List<Question> nonValidQuestions = questionValidator.validateQuestion(questions);
+
+        if(nonValidQuestions.isEmpty()) {
+            questions.stream().forEach((question) -> questionRepository.save(question));
+            return ResponseEntity.ok("UPDATED");
+        } else {
+            return new ResponseEntity<String>("INVALID QUESTIONS PROVIDED", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //Delete
 
 }

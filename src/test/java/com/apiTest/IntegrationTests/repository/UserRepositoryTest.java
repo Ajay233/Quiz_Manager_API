@@ -30,8 +30,6 @@ public class UserRepositoryTest {
 
     @AfterEach
     public void resetDatabase() {
-//        List<User> users = userRepository.findAll();
-//        users.stream().forEach((user) -> userRepository.delete(user));
         userRepository.truncateTable();
     }
 

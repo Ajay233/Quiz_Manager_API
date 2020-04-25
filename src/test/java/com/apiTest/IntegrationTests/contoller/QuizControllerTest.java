@@ -67,10 +67,6 @@ public class QuizControllerTest {
 
     @AfterEach
     public void resetDatabase(){
-//        List<Quiz> quizes = quizRepository.findAll();
-//        quizes.stream().forEach((quiz) -> quizRepository.delete(quiz));
-//
-//        userRepository.delete(user);
         quizRepository.truncateTable();
         userRepository.truncateTable();
     }
