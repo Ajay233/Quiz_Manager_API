@@ -124,4 +124,28 @@ public class AnswerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[2].description").value("Answer3 for questionId 1"));
     }
 
+    @Test
+    public void updateAnswersTest() throws Exception {
+        Answer updatedAnswer1 = new Answer((long) 2, 2, "Answer2 for questionId 2", false);
+        Answer updatedAnswer2 = new Answer((long) 2, 3, "Answer3 for questionId 2", true);
+        updatedAnswer1.setId((long) 1);
+        updatedAnswer2.setId((long) 2);
+
+        String body = "[{\"id\":\"" + updatedAnswer1.getId() + "\"," + "\"questionId\":\"" + updatedAnswer1.getQuestionId() +
+                "\"," + "\"answerNumber\":\"" + updatedAnswer1.getAnswerNumber() + "\"," + "\"description\":\"" +
+                updatedAnswer1.getDescription() + "\"," + "\"correctAnswer\":\"" + updatedAnswer1.getCorrectAnswer() +
+                "\"}," + "{\"id\":\"" + updatedAnswer2.getId() + "\"," + "\"questionId\":\"" + updatedAnswer2.getQuestionId() +
+                "\"," + "\"answerNumber\":\"" + updatedAnswer2.getAnswerNumber() + "\"," + "\"description\":\"" +
+                updatedAnswer2.getDescription() + "\"," + "\"correctAnswer\":\"" + updatedAnswer2.getCorrectAnswer() + "\"}]";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/answer/update")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("UPDATED"));
+
+        Assertions.assertEquals(answersRepository.findById((long) 1).get(), updatedAnswer1);
+        Assertions.assertEquals(answersRepository.findById((long) 2).get(), updatedAnswer2);
+    }
+
 }

@@ -45,4 +45,18 @@ public class AnswerController {
         }
     }
 
+    @RequestMapping(value = "/answer/update", method = RequestMethod.PUT)
+    private ResponseEntity<?> updateAnswers(@RequestBody List<Answer> answers){
+        if(!answerValidator.answersExist(answers)){
+            return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
+        } else if(!answerValidator.validateAnswer(answers)){
+            return new ResponseEntity<String>("INVALID FIELD", HttpStatus.BAD_REQUEST);
+        } else {
+            answers.stream().forEach((answer) -> answersRepository.save(answer));
+            return ResponseEntity.ok("UPDATED");
+        }
+    }
+
+    //delete
+
 }
