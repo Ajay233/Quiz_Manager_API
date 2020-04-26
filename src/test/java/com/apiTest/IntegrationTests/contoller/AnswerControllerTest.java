@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -111,6 +112,16 @@ public class AnswerControllerTest {
         Assertions.assertTrue(answersRepository.existsById((long) 6));
     }
 
-
+    @Test
+    public void getAnswersByQuestionIdTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/answer/findByQuestionId")
+                .headers(httpHeaders)
+                .content("1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].description").value("Answer1 for questionId 1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].description").value("Answer2 for questionId 1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[2].description").value("Answer3 for questionId 1"));
+    }
 
 }

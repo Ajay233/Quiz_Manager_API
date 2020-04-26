@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public interface AnswersRepository extends JpaRepository<Answer, Long> {
@@ -15,5 +16,7 @@ public interface AnswersRepository extends JpaRepository<Answer, Long> {
     @Modifying
     @Query(value = "truncate table answers", nativeQuery = true)
     void truncateTable();
+
+    List<Answer> findByQuestionId(Long questionId);
 
 }

@@ -2,6 +2,7 @@ package com.apiTest.Quiz.controller;
 
 import com.apiTest.Quiz.model.Answer;
 import com.apiTest.Quiz.repository.AnswersRepository;
+import com.apiTest.Quiz.repository.QuestionRepository;
 import com.apiTest.Quiz.service.AnswerValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,9 @@ public class AnswerController {
     AnswersRepository answersRepository;
 
     @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
     AnswerValidator answerValidator;
 
     @RequestMapping(value = "/answer/create", method = RequestMethod.POST)
@@ -29,6 +33,15 @@ public class AnswerController {
             return ResponseEntity.ok("CREATED");
         } else {
             return new ResponseEntity<String>("MISSING FIELDS", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/answer/findByQuestionId", method = RequestMethod.GET)
+    private ResponseEntity<?> getAnswerByQuestionId(@RequestBody Long questionId){
+        if(questionRepository.existsById(questionId)){
+            return new ResponseEntity<List>(answersRepository.findByQuestionId(questionId), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
         }
     }
 
