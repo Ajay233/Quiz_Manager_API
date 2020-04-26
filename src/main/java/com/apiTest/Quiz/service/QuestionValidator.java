@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class QuestionValidator {
@@ -14,12 +13,20 @@ public class QuestionValidator {
     @Autowired
     QuestionRepository questionRepository;
 
-    public List<Question> validateQuestion(List<Question> questions){
-       List<Question> nonMatches;
-       nonMatches = questions.stream()
-               .filter((question) -> questionRepository.existsById(question.getId()) == false)
-               .collect(Collectors.toList());
-        return nonMatches;
+    private boolean validateQuizIds(List<Question> questions){
+        return questions.stream().allMatch((question) -> question.getQuizId().getClass().equals(Long.class));
+    }
+
+    private boolean validateQuestionDescriptions(List<Question> questions){
+        return questions.stream().allMatch((question) -> !question.getDescription().isEmpty());
+    }
+
+    public boolean validateQuestionFields(List<Question> questions){
+        return validateQuizIds(questions) && validateQuestionDescriptions(questions);
+    }
+
+    public boolean validateQuestionsExist(List<Question> questions){
+        return questions.stream().allMatch((question) -> questionRepository.existsById(question.getId()));
     }
 
 }

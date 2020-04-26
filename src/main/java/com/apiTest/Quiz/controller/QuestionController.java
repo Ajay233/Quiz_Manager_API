@@ -23,9 +23,9 @@ public class QuestionController {
     QuestionValidator questionValidator;
 
     @RequestMapping(value = "/question/create", method = RequestMethod.POST)
-    private ResponseEntity<?> createQuestion(@RequestBody Question question){
-        if(question.getDescription() != null){
-            questionRepository.save(question);
+    private ResponseEntity<?> createQuestions(@RequestBody List<Question> questions){
+        if(questionValidator.validateQuestionFields(questions)){
+            questions.stream().forEach((question) -> questionRepository.save(question));
             return ResponseEntity.ok("CREATED");
         } else {
             return new ResponseEntity<String>("MISSING FIELDS", HttpStatus.BAD_REQUEST);
@@ -43,10 +43,7 @@ public class QuestionController {
 
     @RequestMapping(value = "/question/update", method = RequestMethod.PUT)
     private ResponseEntity<?> updateQuestions(@RequestBody List<Question> questions){
-
-        List<Question> nonValidQuestions = questionValidator.validateQuestion(questions);
-
-        if(nonValidQuestions.isEmpty()) {
+        if(questionValidator.validateQuestionsExist(questions)) {
             questions.stream().forEach((question) -> questionRepository.save(question));
             return ResponseEntity.ok("UPDATED");
         } else {
@@ -56,9 +53,7 @@ public class QuestionController {
 
     @RequestMapping(value = "/question/delete", method = RequestMethod.DELETE)
     private ResponseEntity<?> deleteQuestions(@RequestBody List<Question> questions){
-        List<Question> nonValidQuestions = questionValidator.validateQuestion(questions);
-
-        if(nonValidQuestions.isEmpty()) {
+        if(questionValidator.validateQuestionsExist(questions)) {
             questions.stream().forEach((question) -> questionRepository.delete(question));
             return ResponseEntity.ok("DELETED");
         } else {

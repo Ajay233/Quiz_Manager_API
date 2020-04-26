@@ -67,14 +67,8 @@ public class QuestionValidatorTest {
         invalidQuestions.add(dudQuestion1);
         invalidQuestions.add(dudQuestion2);
 
-        List<Question> questions;
-        questions = questionValidator.validateQuestion(questionRepository.findByQuizId((long) 1));
-
-        List<Question> filteredQuestions;
-        filteredQuestions = questionValidator.validateQuestion(invalidQuestions);
-
-        Assertions.assertTrue(questions.isEmpty());
-        Assertions.assertEquals(filteredQuestions.size(), 2);
+        Assertions.assertFalse(questionValidator.validateQuestionsExist(invalidQuestions));
+        Assertions.assertTrue(questionValidator.validateQuestionsExist(questionRepository.findByQuizId((long) 1)));
 
     }
 

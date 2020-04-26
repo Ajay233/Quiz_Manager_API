@@ -91,7 +91,13 @@ public class QuestionControllerTest {
     @Test
     public void createQuestion() throws Exception {
         Question question4 = new Question((long) 2, 2, "Test question number 2 for quiz2");
-        String body = "{\"quizId\":\"" + question4.getQuizId() + "\"," + "\"questionNumber\":\"" + question4.getQuestionNumber() + "\"," + "\"description\":\"" + question4.getDescription() + "\"}";
+        Question question5 = new Question((long) 2, 3, "Test question number 3 for quiz2");
+        question4.setId((long) 4);
+        question5.setId((long) 5);
+        String body = "[{\"quizId\":\"" + question4.getQuizId() + "\"," + "\"questionNumber\":\"" +
+                question4.getQuestionNumber() + "\"," + "\"description\":\"" + question4.getDescription() +
+                "\"},{\"quizId\":\"" + question5.getQuizId() + "\"," + "\"questionNumber\":\"" +
+                question5.getQuestionNumber() + "\"," + "\"description\":\"" + question5.getDescription() + "\"}]";
 
         mockMvc.perform(MockMvcRequestBuilders.post("/question/create")
                 .headers(httpHeaders)
@@ -99,11 +105,9 @@ public class QuestionControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("CREATED"));
 
-        Question savedQuestion = questionRepository.findById((long) 4).get();
-        Assertions.assertNotNull(savedQuestion);
-        Assertions.assertEquals(savedQuestion.getQuizId(), question4.getQuizId());
-        Assertions.assertEquals(savedQuestion.getQuestionNumber(), question4.getQuestionNumber());
-        Assertions.assertEquals(savedQuestion.getDescription(), question4.getDescription());
+        Assertions.assertEquals(questionRepository.findById((long) 4).get(), question4);
+        Assertions.assertEquals(questionRepository.findById((long) 5).get(), question5);
+
     }
 
     @Test
