@@ -148,4 +148,23 @@ public class AnswerControllerTest {
         Assertions.assertEquals(answersRepository.findById((long) 2).get(), updatedAnswer2);
     }
 
+    @Test
+    public void deleteAnswersTest() throws Exception {
+        String body = "[{\"id\":\"" + answer1.getId() + "\"," + "\"questionId\":\"" + answer1.getQuestionId() +
+                "\"," + "\"answerNumber\":\"" + answer1.getAnswerNumber() + "\"," + "\"description\":\"" +
+                answer1.getDescription() + "\"," + "\"correctAnswer\":\"" + answer1.getCorrectAnswer() +
+                "\"}," + "{\"id\":\"" + answer2.getId() + "\"," + "\"questionId\":\"" + answer2.getQuestionId() +
+                "\"," + "\"answerNumber\":\"" + answer2.getAnswerNumber() + "\"," + "\"description\":\"" +
+                answer2.getDescription() + "\"," + "\"correctAnswer\":\"" + answer2.getCorrectAnswer() + "\"}]";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/answer/delete")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("DELETED"));
+
+        Assertions.assertFalse(answersRepository.existsById((long) 1));
+        Assertions.assertFalse(answersRepository.existsById((long) 2));
+    }
+
 }

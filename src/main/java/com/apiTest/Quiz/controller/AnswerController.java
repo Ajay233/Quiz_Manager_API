@@ -57,6 +57,16 @@ public class AnswerController {
         }
     }
 
-    //delete
+    @RequestMapping(value = "/answer/delete", method = RequestMethod.DELETE)
+    private ResponseEntity<?> deleteAnswers(@RequestBody List<Answer> answers){
+        if(!answerValidator.answersExist(answers)){
+            return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
+        } else if(!answerValidator.validateAnswer(answers)){
+            return new ResponseEntity<String>("INVALID FIELD", HttpStatus.BAD_REQUEST);
+        } else {
+            answers.stream().forEach((answer) -> answersRepository.delete(answer));
+            return ResponseEntity.ok("DELETED");
+        }
+    }
 
 }
