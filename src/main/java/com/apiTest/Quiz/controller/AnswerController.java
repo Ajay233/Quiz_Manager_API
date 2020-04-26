@@ -1,0 +1,35 @@
+package com.apiTest.Quiz.controller;
+
+import com.apiTest.Quiz.model.Answer;
+import com.apiTest.Quiz.repository.AnswersRepository;
+import com.apiTest.Quiz.service.AnswerValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+public class AnswerController {
+
+    @Autowired
+    AnswersRepository answersRepository;
+
+    @Autowired
+    AnswerValidator answerValidator;
+
+    @RequestMapping(value = "/answer/create", method = RequestMethod.POST)
+    private ResponseEntity<?> createAnswer(@RequestBody List<Answer> answers){
+        if(answerValidator.validateAnswer(answers)){
+            answers.stream().forEach((answer) -> answersRepository.save(answer));
+            return ResponseEntity.ok("CREATED");
+        } else {
+            return new ResponseEntity<String>("MISSING FIELDS", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+}
