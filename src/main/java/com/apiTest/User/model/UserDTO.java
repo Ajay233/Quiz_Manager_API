@@ -6,6 +6,7 @@ import lombok.Data;
 public class UserDTO extends User {
 
     private String newPassword;
+    private String retypedPassword;
     private String newEmail;
 
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 public class UserController {
@@ -43,7 +44,7 @@ public class UserController {
     //EDIT PROFILE DATA (Forename, Surname, Email  ** will need to handle email separately and do another verify **)
     @RequestMapping(value = "/users/update", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserData(@RequestBody UserDTO updatedUserData){
-        User user = userRepository.findByEmail(updatedUserData.getEmail());
+        User user = userRepository.findById(updatedUserData.getId()).get();
         user.setForename(updatedUserData.getForename());
         user.setSurname(updatedUserData.getSurname());
         user.setEmail(updatedUserData.getNewEmail());
@@ -54,32 +55,39 @@ public class UserController {
     //UPDATE PASSWORD
     @RequestMapping(value = "/users/updatePassword", method = RequestMethod.PUT)
     public ResponseEntity<?> updatePassword(@RequestBody UserDTO newDetails){
+        if(newDetails.getRetypedPassword().equals(newDetails.getNewPassword())) {
 
-        User user = userRepository.findByEmail(newDetails.getEmail());
-        if(user == null){
-            return new ResponseEntity<String>("NO MATCH", HttpStatus.NOT_FOUND);
+            try {
+                User user = userRepository.findById(newDetails.getId()).get();
+                try {
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    newDetails.getEmail(),
+                                    newDetails.getPassword()
+                            )
+                    );
+                    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                    String updatedPassword = encoder.encode(newDetails.getNewPassword());
+                    user.setPassword(updatedPassword);
+                    userRepository.save(user);
+                    return ResponseEntity.ok("UPDATED");
+                } catch (BadCredentialsException e) {
+                    return new ResponseEntity<String>("PASSWORD INCORRECT", HttpStatus.BAD_REQUEST);
+                }
+            } catch(NoSuchElementException e) {
+                System.out.println(e);
+                return new ResponseEntity<String>("NO MATCH", HttpStatus.NOT_FOUND);
+            }
+        } else {
+            return new ResponseEntity<String>("PASSWORD MISMATCH", HttpStatus.BAD_REQUEST);
         }
-        try {
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    newDetails.getEmail(),
-                    newDetails.getPassword()
-                )
-            );
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String updatedPassword = encoder.encode(newDetails.getNewPassword());
-            user.setPassword(updatedPassword);
-            userRepository.save(user);
-            return ResponseEntity.ok("UPDATED");
-        } catch (BadCredentialsException e) {
-            return new ResponseEntity<String>("PASSWORD INCORRECT", HttpStatus.BAD_REQUEST);
-        }
+
     }
 
     //DELETE ACCOUNT
     @RequestMapping(value = "/users/deleteAccount", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteAccount(@RequestBody UserDTO user){
-        User userToDelete = userRepository.findByEmail(user.getEmail());
+        User userToDelete = userRepository.findById(user.getId()).get();
         userRepository.delete(userToDelete);
         return ResponseEntity.ok("DELETED");
     }

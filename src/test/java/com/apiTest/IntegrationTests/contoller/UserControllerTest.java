@@ -100,12 +100,13 @@ class UserControllerTest {
 
     @Test
     void updateUserData() throws Exception {
+        String id = "1";
         String forename = "Joey";
         String surname = "Blogger";
         String email = "joeBlogs@test.com";
         String newEmail = "joeBlogs@test.com";
 
-        String body = "{\"forename\":\"" + forename + "\"," + "\"surname\":\"" + surname + "\"," + "\"email\":\"" + email + "\"," + "\"newEmail\":\"" + newEmail + "\"}";
+        String body = "{\"id\":\"" + id + "\"," + "\"forename\":\"" + forename + "\"," + "\"surname\":\"" + surname + "\"," + "\"email\":\"" + email + "\"," + "\"newEmail\":\"" + newEmail + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users/update").headers(httpHeaders).content(body))
                 .andDo(MockMvcResultHandlers.print())
@@ -118,11 +119,14 @@ class UserControllerTest {
 
     @Test
     void updatePassword() throws Exception {
+        String id = "1";
         String email = "joeBlogs@test.com";
         String password = "testPassword";
         String newPassword = "newTestPassword";
+        String retypedPassword = "newTestPassword";
 
-        String body = "{\"email\":\"" + email + "\"," + "\"password\":\"" + password + "\"," + "\"newPassword\":\"" + newPassword + "\"}";
+        String body = "{\"id\":\"" + id + "\"," + "\"email\":\"" + email + "\"," + "\"password\":\"" + password +
+                "\"," + "\"newPassword\":\"" + newPassword + "\"," + "\"retypedPassword\":\"" + retypedPassword + "\"}";
         String authBody = "{\"email\":\"" + email + "\"," + "\"password\":\"" + newPassword + "\"}";
 
         // Update password
@@ -142,12 +146,15 @@ class UserControllerTest {
     }
 
     @Test
-    void updatePasswordWithIncorrectEmail() throws Exception {
+    void updatePasswordWithIncorrectId() throws Exception {
+        String id = "99";
         String email = "joeBloggers@test.com";
         String password = "testPassword";
         String newPassword = "newTestPassword";
+        String retypedPassword = "newTestPassword";
 
-        String body = "{\"email\":\"" + email + "\"," + "\"password\":\"" + password + "\"," + "\"newPassword\":\"" + newPassword + "\"}";
+        String body = "{\"id\":\"" + id + "\"," + "\"email\":\"" + email + "\"," + "\"password\":\"" + password +
+                "\"," + "\"newPassword\":\"" + newPassword + "\"," + "\"retypedPassword\":\"" + retypedPassword + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users/updatePassword")
                 .headers(httpHeaders)
@@ -158,11 +165,15 @@ class UserControllerTest {
 
     @Test
     void updatePasswordWithIncorrectPassword() throws Exception {
+        String id = "1";
         String email = "joeBlogs@test.com";
         String password = "Password";
         String newPassword = "newTestPassword";
+        String retypedPassword = "newTestPassword";
 
-        String body = "{\"email\":\"" + email + "\"," + "\"password\":\"" + password + "\"," + "\"newPassword\":\"" + newPassword + "\"}";
+        String body = "{\"id\":\"" + id + "\"," + "\"email\":\"" + email + "\"," + "\"password\":\"" +
+                password + "\"," + "\"newPassword\":\"" + newPassword + "\"," + "\"retypedPassword\":\""
+                + retypedPassword + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users/updatePassword")
                 .headers(httpHeaders)
@@ -172,14 +183,21 @@ class UserControllerTest {
     }
 
     @Test
+    void passwordMismatchTest() throws Exception {
+
+    }
+
+    @Test
     void deleteAccount() throws Exception {
-        String email = "joeBlogs@test.com";
-        String body = "{\"email\":\"" + email + "\"}";
+        String id = "2";
+        String body = "{\"id\":\"" + id + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/users/deleteAccount")
                 .headers(httpHeaders)
                 .content(body)).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("DELETED"));
+
+        Assertions.assertFalse(userRepository.existsById((long) 2));
     }
 
 }
