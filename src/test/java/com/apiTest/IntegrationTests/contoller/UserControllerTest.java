@@ -184,7 +184,21 @@ class UserControllerTest {
 
     @Test
     void passwordMismatchTest() throws Exception {
+        String id = "1";
+        String email = "joeBlogs@test.com";
+        String password = "Password";
+        String newPassword = "newTestPassword";
+        String retypedPassword = "differentNewTestPassword";
 
+        String body = "{\"id\":\"" + id + "\"," + "\"email\":\"" + email + "\"," + "\"password\":\"" +
+                password + "\"," + "\"newPassword\":\"" + newPassword + "\"," + "\"retypedPassword\":\""
+                + retypedPassword + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/updatePassword")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("PASSWORD MISMATCH"));
     }
 
     @Test
