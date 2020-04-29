@@ -41,6 +41,28 @@ public class UserController {
         return new ResponseEntity<List>(userRepository.findAll(), HttpStatus.OK);
     }
 
+    //GET USER BY EMAIL
+    @RequestMapping(value = "/users/findByEmail", method = RequestMethod.GET)
+    public ResponseEntity<?> getUserByEmail(@RequestBody String email){
+
+        User user = userRepository.findByEmail(email);
+        if(user != null){
+            return new ResponseEntity<User>(user, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("No user found with that email", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/users/findById", method = RequestMethod.GET)
+    public ResponseEntity<?> getUserById(@RequestBody Long id){
+        try{
+            User user = userRepository.findById(id).get();
+            return new ResponseEntity<User>(user, HttpStatus.OK);
+        } catch(NoSuchElementException e){
+            return new ResponseEntity<String>("No user found with that email", HttpStatus.NOT_FOUND);
+        }
+    }
+
     //EDIT PROFILE DATA (Forename, Surname, Email  ** will need to handle email separately and do another verify **)
     @RequestMapping(value = "/users/update", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserData(@RequestBody UserDTO updatedUserData){

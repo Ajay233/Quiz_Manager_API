@@ -214,4 +214,28 @@ class UserControllerTest {
         Assertions.assertFalse(userRepository.existsById((long) 2));
     }
 
+    @Test
+    void getUserByEmailTest() throws Exception{
+        String body = "joeBlogs@test.com";
+        user.setId(1);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/findByEmail")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(user));
+    }
+
+    @Test
+    void getUserByIdTest() throws Exception{
+        String body = "1";
+        user.setId(1);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/findById")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(user));
+    }
+
 }
