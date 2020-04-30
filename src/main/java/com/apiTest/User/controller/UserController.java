@@ -10,10 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -43,10 +40,11 @@ public class UserController {
 
     //GET USER BY EMAIL
     @RequestMapping(value = "/users/findByEmail", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserByEmail(@RequestBody String email){
+    public ResponseEntity<?> getUserByEmail(@RequestParam String email){
 
         User user = userRepository.findByEmail(email);
         if(user != null){
+            user.setPassword("N/A");
             return new ResponseEntity<User>(user, HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("No user found with that email", HttpStatus.NOT_FOUND);
@@ -54,9 +52,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/findById", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserById(@RequestBody Long id){
+    public ResponseEntity<?> getUserById(@RequestParam Long id){
         try{
             User user = userRepository.findById(id).get();
+            user.setPassword("N/A");
             return new ResponseEntity<User>(user, HttpStatus.OK);
         } catch(NoSuchElementException e){
             return new ResponseEntity<String>("No user found with that email", HttpStatus.NOT_FOUND);
@@ -104,6 +103,18 @@ public class UserController {
             return new ResponseEntity<String>("PASSWORD MISMATCH", HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @RequestMapping(value = "/users/updatePermission", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateUserPermission(@RequestBody UserDTO user){
+        if(userRepository.existsById(user.getId())){
+            User userToUpdate = userRepository.findById(user.getId()).get();
+            userToUpdate.setPermission(user.getPermission());
+            userRepository.save(userToUpdate);
+            return ResponseEntity.ok("UPDATED");
+        } else {
+            return new ResponseEntity<String>("Unable to update, user not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     //DELETE ACCOUNT

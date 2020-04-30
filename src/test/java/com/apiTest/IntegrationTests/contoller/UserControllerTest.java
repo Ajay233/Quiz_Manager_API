@@ -216,26 +216,42 @@ class UserControllerTest {
 
     @Test
     void getUserByEmailTest() throws Exception{
-        String body = "joeBlogs@test.com";
+        String email = "joeBlogs@test.com";
         user.setId(1);
+        user.setPassword("N/A");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/findByEmail")
                 .headers(httpHeaders)
-                .content(body))
+                .param("email", email))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").value(user));
     }
 
     @Test
     void getUserByIdTest() throws Exception{
-        String body = "1";
+        String id = "1";
         user.setId(1);
+        user.setPassword("N/A");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/findById")
                 .headers(httpHeaders)
-                .content(body))
+                .param("id", id))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").value(user));
+    }
+
+    @Test
+    void updateUserPermission() throws Exception {
+
+        String body = "{\"id\":\"" + "1" + "\"," + "\"permission\":\"" + "ADMIN" + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/updatePermission")
+                .headers(httpHeaders).content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("UPDATED"));
+
+        Assertions.assertEquals(userRepository.findByEmail(user.getEmail()).getPermission(), "ADMIN");
+
     }
 
 }
