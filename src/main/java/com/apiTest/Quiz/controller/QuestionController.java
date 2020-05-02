@@ -6,10 +6,7 @@ import com.apiTest.Quiz.service.QuestionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,7 +30,7 @@ public class QuestionController {
     }
 
     @RequestMapping(value = "/question/findByQuizId", method = RequestMethod.GET)
-    private ResponseEntity<?> getQuestionsByQuizId(@RequestBody Long quizId){
+    private ResponseEntity<?> getQuestionsByQuizId(@RequestParam Long quizId){
         if(!questionRepository.findByQuizId(quizId).isEmpty()){
             return new ResponseEntity<List>(questionRepository.findByQuizId(quizId), HttpStatus.OK);
         } else {

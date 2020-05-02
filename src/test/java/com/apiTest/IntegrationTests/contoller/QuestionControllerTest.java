@@ -113,8 +113,7 @@ public class QuestionControllerTest {
     @Test
     public void getQuestionsByQuizIdTest() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.get("/question/findByQuizId")
-                .headers(httpHeaders)
-                .content("1"))
+                .headers(httpHeaders).param("quizId", "1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].description").value("test question number 1 for quiz1"))
