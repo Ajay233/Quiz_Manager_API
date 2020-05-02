@@ -116,7 +116,7 @@ public class AnswerControllerTest {
     public void getAnswersByQuestionIdTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/answer/findByQuestionId")
                 .headers(httpHeaders)
-                .content("1"))
+                .param("questionId", "1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].description").value("Answer1 for questionId 1"))
