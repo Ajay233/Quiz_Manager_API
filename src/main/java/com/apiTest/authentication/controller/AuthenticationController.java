@@ -57,7 +57,7 @@ public class AuthenticationController {
     public ResponseEntity<?> signUpNewUser(@RequestBody User user){
 
         //ADD - validation to check the email is in a valid format, if not return an error response
-
+        System.out.println("User exists? " + userRepository.findByEmail(user.getEmail()));
         if(userRepository.findByEmail(user.getEmail()) == null){
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             // Do sign up

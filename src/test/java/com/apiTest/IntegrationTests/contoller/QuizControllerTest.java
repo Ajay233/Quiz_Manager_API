@@ -104,7 +104,7 @@ public class QuizControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/quiz/findByCategory")
                 .headers(httpHeaders)
-                .content(category))
+                .param("category", category))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[1].name").value("quiz3"))
@@ -128,7 +128,7 @@ public class QuizControllerTest {
         Quiz quiz2FromDB = quizRepository.findByName(quiz2.getName()).get(0);
         mockMvc.perform(MockMvcRequestBuilders.get("/quiz/findByName")
                 .headers(httpHeaders)
-                .content("quiz2"))
+                .param("name", "quiz2"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id").value(quiz2FromDB.getId()))

@@ -46,7 +46,7 @@ public class QuizController {
     }
 
     @RequestMapping(value = "/quiz/findByCategory", method = RequestMethod.GET)
-    private ResponseEntity<?> getQuizesByCategory(@RequestBody String category){
+    private ResponseEntity<?> getQuizesByCategory(@RequestParam String category){
         List<Quiz> quizes = quizRepository.findByCategory(category);
         if(quizes.size() != 0){
             return new ResponseEntity<List>(quizes, HttpStatus.OK);
@@ -56,7 +56,7 @@ public class QuizController {
     }
 
     @RequestMapping(value = "/quiz/findByName", method = RequestMethod.GET)
-    private ResponseEntity<?> getQuizByName(@RequestBody String name) throws JwtException {
+    private ResponseEntity<?> getQuizByName(@RequestParam String name) throws JwtException {
         if(!quizRepository.findByName(name).isEmpty()){
             return new ResponseEntity<List>(quizRepository.findByName(name), HttpStatus.OK);
         } else {
