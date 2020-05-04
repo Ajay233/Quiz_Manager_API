@@ -52,7 +52,7 @@ public class QuestionsServiceTest {
     public void deleteAssociatedAnswersTest() {
         ArrayList<Question> questions = new ArrayList<>();
         questions.add(question1);
-        questionsService.DeleteAll(questions);
+        questionsService.deleteQuestionsAndAnswers(questions);
         Assertions.assertFalse(questionRepository.existsById((long) 1));
         Assertions.assertFalse(answersRepository.existsById((long) 1));
         Assertions.assertFalse(answersRepository.existsById((long) 2));

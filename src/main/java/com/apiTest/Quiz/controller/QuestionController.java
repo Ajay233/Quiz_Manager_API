@@ -56,7 +56,7 @@ public class QuestionController {
     @RequestMapping(value = "/question/delete", method = RequestMethod.DELETE)
     private ResponseEntity<?> deleteQuestions(@RequestBody List<Question> questions){
         if(questionValidator.validateQuestionsExist(questions)) {
-            questionsService.DeleteAll(questions);
+            questionsService.deleteQuestionsAndAnswers(questions);
             return ResponseEntity.ok("DELETED");
         } else {
             return new ResponseEntity<String>("INVALID QUESTIONS PROVIDED", HttpStatus.BAD_REQUEST);

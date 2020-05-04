@@ -29,7 +29,7 @@ public class QuestionsService {
         });
     }
 
-    public void DeleteAll(List<Question> questions) {
+    public void deleteQuestionsAndAnswers(List<Question> questions) {
         questions.stream().forEach((question) -> {
             deleteAssociatedAnswers(question.getId());
             questionRepository.delete(question);
