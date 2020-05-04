@@ -2,6 +2,7 @@ package com.apiTest.Quiz.controller;
 
 import com.apiTest.Quiz.model.Quiz;
 import com.apiTest.Quiz.repository.QuizRepository;
+import com.apiTest.Quiz.service.QuizService;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,9 @@ public class QuizController {
     @Autowired
     QuizRepository quizRepository;
 
+    @Autowired
+    QuizService quizService;
+
     @RequestMapping(value = "/quiz/create", method = RequestMethod.POST)
     private ResponseEntity<?> createQuiz(@RequestBody Quiz quiz){
         if(quiz.getName() != null && quiz.getDescription() != null && quiz.getCategory() != null) {
@@ -29,8 +33,8 @@ public class QuizController {
     @RequestMapping(value = "/quiz/delete", method = RequestMethod.DELETE)
     private ResponseEntity<?> deleteQuiz(@RequestBody Quiz quiz){
         if(quiz.getId() != null && quiz.getName() != null && quiz.getDescription() != null && quiz.getCategory() != null) {
-            if(quizRepository.findById(quiz.getId()) != null){
-                quizRepository.delete(quiz);
+            if(quizRepository.existsById(quiz.getId())){
+                quizService.deleteQuizAndAssociations(quiz);
                 return ResponseEntity.ok("DELETED");
             } else {
                 return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
