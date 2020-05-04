@@ -3,6 +3,7 @@ package com.apiTest.Quiz.controller;
 import com.apiTest.Quiz.model.Question;
 import com.apiTest.Quiz.repository.QuestionRepository;
 import com.apiTest.Quiz.service.QuestionValidator;
+import com.apiTest.Quiz.service.QuestionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ public class QuestionController {
 
     @Autowired
     QuestionValidator questionValidator;
+
+    @Autowired
+    QuestionsService questionsService;
 
     @RequestMapping(value = "/question/create", method = RequestMethod.POST)
     private ResponseEntity<?> createQuestions(@RequestBody List<Question> questions){
@@ -48,10 +52,11 @@ public class QuestionController {
         }
     }
 
+
     @RequestMapping(value = "/question/delete", method = RequestMethod.DELETE)
     private ResponseEntity<?> deleteQuestions(@RequestBody List<Question> questions){
         if(questionValidator.validateQuestionsExist(questions)) {
-            questions.stream().forEach((question) -> questionRepository.delete(question));
+            questionsService.DeleteAll(questions);
             return ResponseEntity.ok("DELETED");
         } else {
             return new ResponseEntity<String>("INVALID QUESTIONS PROVIDED", HttpStatus.BAD_REQUEST);
