@@ -75,12 +75,13 @@ public class QuizControllerTest {
     public void createQuizTest() throws Exception {
         Quiz quiz4 = new Quiz("quiz4", "Test of quiz4", "TestCat2");
         String body = "{\"name\":\"" + quiz4.getName() + "\"," + "\"description\":\"" + quiz4.getDescription() + "\"," + "\"category\":\"" + quiz4.getCategory() + "\"}";
-
+        quiz4.setId((long) 4);
         mockMvc.perform(MockMvcRequestBuilders.post("/quiz/create")
                 .headers(httpHeaders)
                 .content(body))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("CREATED"));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(quiz4));
 
         Assertions.assertNotNull(quizRepository.findByName(quiz4.getName()));
     }

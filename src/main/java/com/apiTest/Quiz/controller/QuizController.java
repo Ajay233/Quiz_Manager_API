@@ -23,8 +23,8 @@ public class QuizController {
     @RequestMapping(value = "/quiz/create", method = RequestMethod.POST)
     private ResponseEntity<?> createQuiz(@RequestBody Quiz quiz){
         if(quiz.getName() != null && quiz.getDescription() != null && quiz.getCategory() != null) {
-            quizRepository.save(quiz);
-            return ResponseEntity.ok("CREATED");
+            Quiz savedQuiz = quizRepository.save(quiz);
+            return new ResponseEntity<Quiz>(savedQuiz, HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("MISSING DETAILS", HttpStatus.BAD_REQUEST);
         }
