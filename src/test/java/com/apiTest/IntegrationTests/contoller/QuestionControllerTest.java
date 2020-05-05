@@ -103,7 +103,8 @@ public class QuestionControllerTest {
                 .headers(httpHeaders)
                 .content(body))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("CREATED"));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1]").value(question5));
 
         Assertions.assertEquals(questionRepository.findById((long) 4).get(), question4);
         Assertions.assertEquals(questionRepository.findById((long) 5).get(), question5);

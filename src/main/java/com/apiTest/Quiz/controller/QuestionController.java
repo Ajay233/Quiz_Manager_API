@@ -26,8 +26,8 @@ public class QuestionController {
     @RequestMapping(value = "/question/create", method = RequestMethod.POST)
     private ResponseEntity<?> createQuestions(@RequestBody List<Question> questions){
         if(questionValidator.validateQuestionFields(questions)){
-            questions.stream().forEach((question) -> questionRepository.save(question));
-            return ResponseEntity.ok("CREATED");
+            List<Question> savedQuestions = questionRepository.saveAll(questions);
+            return new ResponseEntity<List>(savedQuestions, HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("MISSING FIELDS", HttpStatus.BAD_REQUEST);
         }
