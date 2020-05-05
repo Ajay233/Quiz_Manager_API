@@ -95,6 +95,8 @@ public class AnswerControllerTest {
     public void createAnswersTest() throws Exception {
         Answer answer5 = new Answer((long) 2, 2, "Answer2 for questionId 2", false);
         Answer answer6 = new Answer((long) 2, 3, "Answer3 for questionId 2", true);
+        answer5.setId((long) 5);
+        answer6.setId((long) 6);
 
         String body = "[{\"questionId\":\"" + answer5.getQuestionId() + "\"," + "\"answerNumber\":\"" + answer5.getAnswerNumber() +
                 "\"," + "\"description\":\"" + answer5.getDescription() + "\"," + "\"correctAnswer\":\"" + answer5.getCorrectAnswer() +
@@ -106,7 +108,9 @@ public class AnswerControllerTest {
                 .headers(httpHeaders)
                 .content(body))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("CREATED"));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]").value(answer5))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1]").value(answer6));
 
         Assertions.assertTrue(answersRepository.existsById((long) 5));
         Assertions.assertTrue(answersRepository.existsById((long) 6));
