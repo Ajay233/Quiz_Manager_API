@@ -1,6 +1,7 @@
 package com.apiTest.Quiz.controller;
 
 import com.apiTest.Quiz.model.Quiz;
+import com.apiTest.Quiz.model.QuizListItem;
 import com.apiTest.Quiz.repository.QuizRepository;
 import com.apiTest.Quiz.service.QuizService;
 import io.jsonwebtoken.JwtException;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -46,7 +48,8 @@ public class QuizController {
 
     @RequestMapping(value = "/quiz/getAll", method = RequestMethod.GET)
     private  ResponseEntity<?> getAllQuizes(){
-        return new ResponseEntity<List>(quizRepository.findAll(), HttpStatus.OK);
+        ArrayList<QuizListItem> list = quizService.getAllQuizesOrderedByCategory();
+        return new ResponseEntity<ArrayList>(list, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/quiz/findByCategory", method = RequestMethod.GET)

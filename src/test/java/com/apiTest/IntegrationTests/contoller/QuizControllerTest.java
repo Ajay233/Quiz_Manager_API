@@ -5,6 +5,8 @@ import com.apiTest.Quiz.repository.QuizRepository;
 import com.apiTest.User.model.User;
 import com.apiTest.User.repository.UserRepository;
 import com.apiTest.authentication.model.UserPrincipal;
+import com.apiTest.lookup.model.Lookup;
+import com.apiTest.lookup.repository.LookupRepository;
 import com.apiTest.util.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -32,11 +34,16 @@ public class QuizControllerTest {
     UserRepository userRepository;
 
     @Autowired
+    LookupRepository lookupRepository;
+
+    @Autowired
     JwtUtil jwtUtil;
 
     @Autowired
     private MockMvc mockMvc;
 
+    private Lookup lookupVal1;
+    private Lookup lookupVal2;
     private Quiz quiz1;
     private Quiz quiz2;
     private Quiz quiz3;
@@ -48,6 +55,11 @@ public class QuizControllerTest {
 
     @BeforeEach
     public void setUpDatabase(){
+        lookupVal1 = new Lookup("Test", "Quiz Category");
+        lookupVal2 = new Lookup("NotTest", "Quiz Category");
+        lookupRepository.save(lookupVal1);
+        lookupRepository.save(lookupVal2);
+
         quiz1 = new Quiz("quiz1", "Test of quiz1", "Test");
         quiz2 = new Quiz("quiz2", "Test of quiz2", "NotTest");
         quiz3 = new Quiz("quiz3", "Test of quiz3", "Test");
@@ -69,6 +81,7 @@ public class QuizControllerTest {
     public void resetDatabase(){
         quizRepository.truncateTable();
         userRepository.truncateTable();
+        lookupRepository.truncateTable();
     }
 
     @Test
@@ -119,9 +132,10 @@ public class QuizControllerTest {
                 .headers(httpHeaders))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].name").value("quiz2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].description").value("Test of quiz2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].category").value("NotTest"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].category").value("NotTest"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].quizList.[0].name").value("quiz2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].quizList.[0].description").value("Test of quiz2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].quizList.[0].category").value("NotTest"));
     }
 
     @Test
