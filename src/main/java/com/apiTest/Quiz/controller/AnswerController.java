@@ -4,6 +4,7 @@ import com.apiTest.Quiz.model.Answer;
 import com.apiTest.Quiz.repository.AnswersRepository;
 import com.apiTest.Quiz.repository.QuestionRepository;
 import com.apiTest.Quiz.service.AnswerValidator;
+import com.apiTest.util.SortingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,9 @@ public class AnswerController {
     @Autowired
     AnswerValidator answerValidator;
 
+    @Autowired
+    SortingUtil sortingUtil;
+
     @RequestMapping(value = "/answer/create", method = RequestMethod.POST)
     private ResponseEntity<?> createAnswer(@RequestBody List<Answer> answers){
         if(answerValidator.validateAnswer(answers)){
@@ -37,7 +41,9 @@ public class AnswerController {
     @RequestMapping(value = "/answer/findByQuestionId", method = RequestMethod.GET)
     private ResponseEntity<?> getAnswerByQuestionId(@RequestParam Long questionId){
         if(questionRepository.existsById(questionId)){
-            return new ResponseEntity<List>(answersRepository.findByQuestionId(questionId), HttpStatus.OK);
+            List<Answer> answers = answersRepository.findByQuestionId(questionId);
+            sortingUtil.AnswerSelectSort(answers, answers.size());
+            return new ResponseEntity<List>(answers, HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
         }
