@@ -15,6 +15,7 @@ public class Quiz {
     private String name;
     private String description;
     private String category;
+    private String status;
 
     public Quiz(){}
 
@@ -22,6 +23,7 @@ public class Quiz {
         this.name = name;
         this.description = description;
         this.category = category;
+        this.status = "DRAFT";
     }
 
 }

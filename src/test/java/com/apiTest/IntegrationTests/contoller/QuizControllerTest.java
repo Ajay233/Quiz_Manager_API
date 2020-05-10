@@ -87,7 +87,8 @@ public class QuizControllerTest {
     @Test
     public void createQuizTest() throws Exception {
         Quiz quiz4 = new Quiz("quiz4", "Test of quiz4", "TestCat2");
-        String body = "{\"name\":\"" + quiz4.getName() + "\"," + "\"description\":\"" + quiz4.getDescription() + "\"," + "\"category\":\"" + quiz4.getCategory() + "\"}";
+        String body = "{\"name\":\"" + quiz4.getName() + "\"," + "\"description\":\"" + quiz4.getDescription() +
+                "\"," + "\"category\":\"" + quiz4.getCategory() + "\"," + "\"status\":\"" + quiz4.getStatus() + "\"}";
         quiz4.setId((long) 4);
         mockMvc.perform(MockMvcRequestBuilders.post("/quiz/create")
                 .headers(httpHeaders)
@@ -102,7 +103,9 @@ public class QuizControllerTest {
     @Test
     public void deleteQuizTest() throws Exception {
         Quiz quiz2FromDB = quizRepository.findByName(quiz2.getName()).get(0);
-        String body = "{\"id\":\"" + quiz2FromDB.getId() + "\"," +  "\"name\":\"" + quiz2FromDB.getName() + "\"," + "\"description\":\"" + quiz2FromDB.getDescription() + "\"," + "\"category\":\"" + quiz2FromDB.getCategory() + "\"}";
+        String body = "{\"id\":\"" + quiz2FromDB.getId() + "\"," +  "\"name\":\"" + quiz2FromDB.getName() + "\"," +
+                "\"description\":\"" + quiz2FromDB.getDescription() + "\"," + "\"category\":\"" +
+                quiz2FromDB.getCategory() + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/quiz/delete")
                 .headers(httpHeaders).content(body))
@@ -158,7 +161,9 @@ public class QuizControllerTest {
         Quiz updatedQuiz2 = new Quiz("updatedQuiz2", "Test of quiz2 after update", "NotTest");
         updatedQuiz2.setId(quiz2Id);
 
-        String body = "{\"id\":\"" + updatedQuiz2.getId() + "\"," +  "\"name\":\"" + updatedQuiz2.getName() + "\"," + "\"description\":\"" + updatedQuiz2.getDescription() + "\"," + "\"category\":\"" + updatedQuiz2.getCategory() + "\"}";
+        String body = "{\"id\":\"" + updatedQuiz2.getId() + "\"," +  "\"name\":\"" + updatedQuiz2.getName() + "\"," +
+                "\"description\":\"" + updatedQuiz2.getDescription() + "\"," + "\"category\":\"" +
+                updatedQuiz2.getCategory() + "\"," + "\"status\":\"" + updatedQuiz2.getStatus() + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/quiz/update")
                 .headers(httpHeaders)
