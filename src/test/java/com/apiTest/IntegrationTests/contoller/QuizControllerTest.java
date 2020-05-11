@@ -174,4 +174,24 @@ public class QuizControllerTest {
         Assertions.assertEquals(quizRepository.findById(quiz2Id).get(), updatedQuiz2);
     }
 
+    @Test
+    public void updateQuizStatusTest() throws Exception {
+
+        Quiz updatedQuiz = quizRepository.findById((long) 2).get();
+        updatedQuiz.setStatus("READY");
+
+        String body = "{\"id\":\"" + updatedQuiz.getId() + "\"," +  "\"name\":\"" + updatedQuiz.getName() + "\"," +
+                "\"description\":\"" + updatedQuiz.getDescription() + "\"," + "\"category\":\"" +
+                updatedQuiz.getCategory() + "\"," + "\"status\":\"" + updatedQuiz.getStatus() + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/quiz/updateStatus")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(updatedQuiz));
+
+        Assertions.assertEquals(quizRepository.findById((long) 2).get(), updatedQuiz);
+    }
+
 }
