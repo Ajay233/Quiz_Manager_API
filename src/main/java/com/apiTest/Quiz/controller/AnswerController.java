@@ -56,8 +56,8 @@ public class AnswerController {
         } else if(!answerValidator.validateAnswer(answers)){
             return new ResponseEntity<String>("INVALID FIELD", HttpStatus.BAD_REQUEST);
         } else {
-            answers.stream().forEach((answer) -> answersRepository.save(answer));
-            return ResponseEntity.ok("UPDATED");
+            List<Answer> savedAnswers = answersRepository.saveAll(answers);
+            return new ResponseEntity<List>(savedAnswers, HttpStatus.OK);
         }
     }
 

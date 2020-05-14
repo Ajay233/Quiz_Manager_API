@@ -146,7 +146,9 @@ public class AnswerControllerTest {
                 .headers(httpHeaders)
                 .content(body))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("UPDATED"));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]").value(updatedAnswer1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1]").value(updatedAnswer2));
 
         Assertions.assertEquals(answersRepository.findById((long) 1).get(), updatedAnswer1);
         Assertions.assertEquals(answersRepository.findById((long) 2).get(), updatedAnswer2);
