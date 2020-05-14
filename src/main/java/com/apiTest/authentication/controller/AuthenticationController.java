@@ -175,27 +175,27 @@ public class AuthenticationController {
     @RequestMapping(value = "/auth/login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
-        // String verified = userRepository.findByEmail(authenticationRequest.getEmail()).getVerified();
+        if(userRepository.findByEmail(authenticationRequest.getEmail()).getVerified().equals("true")) {
 
-        // Need to add in a check to see if a user is verified, if not return
-        // a response to confirm they need to verify before they can login
-
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            authenticationRequest.getEmail(),
-                            authenticationRequest.getPassword()
-                    )
-            );
-            final UserDetails userDetails = quizUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
-            final User user = userRepository.findByEmail(authenticationRequest.getEmail());
-            user.setPassword(""); // Remove the encoded password so it's not stored on the front end
-            final String jwt = jwtTokenUtil.generateToken(userDetails);
-            return ResponseEntity.ok(new AuthenticationResponse(user, jwt)); // Need to improve on this so I can send more (look into ResponseEntity)
-        } catch (BadCredentialsException e) {
+            try {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                authenticationRequest.getEmail(),
+                                authenticationRequest.getPassword()
+                        )
+                );
+                final UserDetails userDetails = quizUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+                final User user = userRepository.findByEmail(authenticationRequest.getEmail());
+                user.setPassword(""); // Remove the encoded password so it's not stored on the front end
+                final String jwt = jwtTokenUtil.generateToken(userDetails);
+                return ResponseEntity.ok(new AuthenticationResponse(user, jwt)); // Need to improve on this so I can send more (look into ResponseEntity)
+            } catch (BadCredentialsException e) {
 //            throw new Exception("Incorrect username or password", e);
 
-            return ResponseEntity.badRequest().body("Incorrect username or password");
+                return ResponseEntity.badRequest().body("Incorrect username or password");
+            }
+        } else {
+            return new ResponseEntity<String>("NOT VERIFIED", HttpStatus.UNAUTHORIZED);
         }
 
     }
