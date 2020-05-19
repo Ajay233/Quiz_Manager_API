@@ -40,10 +40,14 @@ public class QuestionController {
 
     @RequestMapping(value = "/question/findByQuizId", method = RequestMethod.GET)
     private ResponseEntity<?> getQuestionsByQuizId(@RequestParam Long quizId){
-        if(!questionRepository.findByQuizId(quizId).isEmpty()){
-            List<Question> questions = questionRepository.findByQuizId(quizId);
-            sortingUtil.QuestionSelectSort(questions, questions.size());
-            return new ResponseEntity<List>(questions, HttpStatus.OK);
+        if(questionValidator.quizExists(quizId)) {
+            if (!questionRepository.findByQuizId(quizId).isEmpty()) {
+                List<Question> questions = questionRepository.findByQuizId(quizId);
+                sortingUtil.QuestionSelectSort(questions, questions.size());
+                return new ResponseEntity<List>(questions, HttpStatus.OK);
+            } else {
+                return ResponseEntity.ok("NO QUESTIONS");
+            }
         } else {
             return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
         }

@@ -2,6 +2,7 @@ package com.apiTest.Quiz.service;
 
 import com.apiTest.Quiz.model.Question;
 import com.apiTest.Quiz.repository.QuestionRepository;
+import com.apiTest.Quiz.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,14 @@ public class QuestionValidator {
     @Autowired
     QuestionRepository questionRepository;
 
-    private boolean validateQuizIds(List<Question> questions){
+    @Autowired
+    QuizRepository quizRepository;
+
+    public Boolean quizExists(Long quizId){
+        return quizRepository.existsById(quizId);
+    }
+
+    private boolean validateQuestionIds(List<Question> questions){
         return questions.stream().allMatch((question) -> question.getQuizId().getClass().equals(Long.class));
     }
 
@@ -22,7 +30,7 @@ public class QuestionValidator {
     }
 
     public boolean validateQuestionFields(List<Question> questions){
-        return validateQuizIds(questions) && validateQuestionDescriptions(questions);
+        return validateQuestionIds(questions) && validateQuestionDescriptions(questions);
     }
 
     public boolean validateQuestionsExist(List<Question> questions){
