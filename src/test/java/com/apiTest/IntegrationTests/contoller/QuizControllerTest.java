@@ -169,7 +169,8 @@ public class QuizControllerTest {
                 .headers(httpHeaders)
                 .content(body))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("UPDATED"));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(updatedQuiz2));
 
         Assertions.assertEquals(quizRepository.findById(quiz2Id).get(), updatedQuiz2);
     }
