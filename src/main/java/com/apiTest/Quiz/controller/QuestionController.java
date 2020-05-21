@@ -56,8 +56,8 @@ public class QuestionController {
     @RequestMapping(value = "/question/update", method = RequestMethod.PUT)
     private ResponseEntity<?> updateQuestions(@RequestBody List<Question> questions){
         if(questionValidator.validateQuestionsExist(questions)) {
-            questions.stream().forEach((question) -> questionRepository.save(question));
-            return ResponseEntity.ok("UPDATED");
+            List<Question> savedQuestions = questionRepository.saveAll(questions);
+            return new ResponseEntity<List>(savedQuestions, HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("INVALID QUESTIONS PROVIDED", HttpStatus.BAD_REQUEST);
         }

@@ -124,13 +124,17 @@ public class QuestionControllerTest {
     @Test
     public void updateQuestionsTest() throws Exception {
         Question updatedQuestion3 = new Question((long) 1, 3, "Test question number 3 for quiz1");
-        String body = "[{\"id\":\"" + "3" + "\"," + "\"quizId\":\"" + updatedQuestion3.getQuizId() + "\"," + "\"questionNumber\":\"" + updatedQuestion3.getQuestionNumber() + "\"," + "\"description\":\"" + updatedQuestion3.getDescription() + "\"}]";
+        updatedQuestion3.setId((long) 3);
+        String body = "[{\"id\":\"" + updatedQuestion3.getId() + "\"," + "\"quizId\":\"" + updatedQuestion3.getQuizId() +
+                "\"," + "\"questionNumber\":\"" + updatedQuestion3.getQuestionNumber() + "\"," + "\"description\":\"" +
+                updatedQuestion3.getDescription() + "\"}]";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/question/update")
                 .headers(httpHeaders)
                 .content(body))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("UPDATED"));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]").value(updatedQuestion3));
     }
 
     @Test
