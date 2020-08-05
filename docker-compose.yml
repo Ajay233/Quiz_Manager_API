@@ -13,7 +13,7 @@ services:
       - MYSQL_PASSWORD=
     container_name: mysql-test3
     volumes:
-      - fs-mysql-audit-data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
 
   practice-test-db:
     image: "mysql:8.0.19"
@@ -26,7 +26,8 @@ services:
       - MYSQL_PASSWORD=
     container_name: mysql-testdb
     volumes:
-      - fs-mysql-audit-data:/var/lib/mysql
+      - mysql-test-data:/var/lib/mysql
 
 volumes:
-  fs-mysql-audit-data:
+  mysql-data:
+  mysql-test-data:

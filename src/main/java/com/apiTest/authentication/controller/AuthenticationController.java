@@ -64,7 +64,7 @@ public class AuthenticationController {
             User newUser = new User(user.getForename(), user.getSurname(), user.getEmail(), encoder.encode(user.getPassword()));
             userRepository.save(newUser);
 
-            // create the token and verificationToken object
+            // create the token and verificationToken object (trialing doing this in the verification token class)
 //            String token = UUID.randomUUID().toString();
             VerificationToken verificationToken = new VerificationToken(userRepository.findByEmail(user.getEmail()).getId());
             verificationToken.setExpiryDate(verificationToken.calcExpiryTime(1)); // override the default time
@@ -88,7 +88,7 @@ public class AuthenticationController {
 //                            "Complete your registration",
 //                            mailConfig
 //                    );
-                    gmailService.sendMail("ajaymungurwork@outlook.com", newUser.getForename(), messageTwo, gmailConfig);
+                    gmailService.sendMail(user.getEmail(), newUser.getForename(), messageTwo, gmailConfig);
                     System.out.println("Email sent");
                 } catch (MailSendException e) {
                     e.printStackTrace();
@@ -142,7 +142,7 @@ public class AuthenticationController {
         // Delete the old token
         verificationTokenRepository.delete(verificationToken);
 
-        //Create a new token
+        //Create a new token (trialing doing this in the verification token class)
 //        String newToken = UUID.randomUUID().toString();
 
         // save the token to a verificationToken object and then save to the token table
@@ -163,7 +163,7 @@ public class AuthenticationController {
 //                        "Complete your registration",
 //                        mailConfig
 //                );
-                gmailService.sendMail("ajaymungurwork@outlook.com", user.getForename(), messageTwo, gmailConfig);
+                gmailService.sendMail(user.getEmail(), user.getForename(), messageTwo, gmailConfig);
             } catch(MailSendException e){
                 e.printStackTrace();
             }
