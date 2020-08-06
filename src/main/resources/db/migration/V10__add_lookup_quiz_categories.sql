@@ -1,0 +1,12 @@
+INSERT INTO lookup (name, type) values ("Comics", "Quiz Category");
+INSERT INTO lookup (name, type) values ("TV", "Quiz Category");
+INSERT INTO lookup (name, type) values ("Gaming", "Quiz Category");
+INSERT INTO lookup (name, type) values ("Films", "Quiz Category");
+INSERT INTO lookup (name, type) values ("Sports", "Quiz Category");
+INSERT INTO lookup (name, type) values ("Music", "Quiz Category");
+INSERT INTO lookup (name, type) values ("History", "Quiz Category");
+INSERT INTO lookup (name, type) values ("Science", "Quiz Category");
+INSERT INTO lookup (name, type) values ("Technology", "Quiz Category");
+INSERT INTO lookup (name, type) values ("Art", "Quiz Category");
+INSERT INTO lookup (name, type) values ("Literature", "Quiz Category");
+INSERT INTO lookup (name, type) values ("General Knowledge", "Quiz Category");
