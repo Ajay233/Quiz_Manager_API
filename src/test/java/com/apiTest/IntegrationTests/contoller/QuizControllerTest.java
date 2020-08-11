@@ -1,6 +1,10 @@
 package com.apiTest.IntegrationTests.contoller;
 
+import com.apiTest.Quiz.model.Answer;
+import com.apiTest.Quiz.model.Question;
 import com.apiTest.Quiz.model.Quiz;
+import com.apiTest.Quiz.repository.AnswersRepository;
+import com.apiTest.Quiz.repository.QuestionRepository;
 import com.apiTest.Quiz.repository.QuizRepository;
 import com.apiTest.User.model.User;
 import com.apiTest.User.repository.UserRepository;
@@ -29,6 +33,12 @@ public class QuizControllerTest {
 
     @Autowired
     QuizRepository quizRepository;
+
+    @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
+    AnswersRepository answersRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -63,9 +73,16 @@ public class QuizControllerTest {
         quiz1 = new Quiz("quiz1", "Test of quiz1", "Test");
         quiz2 = new Quiz("quiz2", "Test of quiz2", "NotTest");
         quiz3 = new Quiz("quiz3", "Test of quiz3", "Test");
+        Question question = new Question((long) 2, 1, "test");
+        Answer answer1 = new Answer((long) 1, 1, "test1", false);
+        Answer answer2 = new Answer((long) 1, 2, "test2", true);
         quizRepository.save(quiz1);
         quizRepository.save(quiz2);
         quizRepository.save(quiz3);
+
+        questionRepository.save(question);
+        answersRepository.save(answer1);
+        answersRepository.save(answer2);
 
         user = new User("Joe", "Blogs", "joeBlogs@test.com", encoder.encode("testPassword"));
         userRepository.save(user);
@@ -80,6 +97,8 @@ public class QuizControllerTest {
     @AfterEach
     public void resetDatabase(){
         quizRepository.truncateTable();
+        questionRepository.truncateTable();
+        answersRepository.truncateTable();
         userRepository.truncateTable();
         lookupRepository.truncateTable();
     }

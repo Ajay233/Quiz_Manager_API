@@ -36,16 +36,25 @@ public class QuizServiceTest {
     private Answer answer2 = new Answer((long) 1, 2, "Answer 2", false); // id:2
     private Answer answer3 = new Answer((long) 1, 3, "Answer 3", true); // id:3
     private Answer answer4 = new Answer((long) 1, 4, "Answer 4", false); // id:4
+    private Answer answer5 = new Answer((long) 2, 1, "Answer 1", true); // id:5
+    private Answer answer6 = new Answer((long) 2, 2, "Answer 2", false); // id:6
+    private Answer answer7 = new Answer((long) 2, 3, "Answer 3", false); // id:7
+    private Answer answer8 = new Answer((long) 2, 4, "Answer 4", false); // id:8
 
 
     @BeforeEach
     public void setUpDatabase(){
         quizRepository.save(quiz);
         questionRepository.save(question1);
+        questionRepository.save(question2);
         answersRepository.save(answer1);
         answersRepository.save(answer2);
         answersRepository.save(answer3);
         answersRepository.save(answer4);
+        answersRepository.save(answer5);
+        answersRepository.save(answer6);
+        answersRepository.save(answer7);
+        answersRepository.save(answer8);
     }
 
     @AfterEach
@@ -64,6 +73,19 @@ public class QuizServiceTest {
         Assertions.assertFalse(answersRepository.existsById((long) 2));
         Assertions.assertFalse(answersRepository.existsById((long) 3));
         Assertions.assertFalse(answersRepository.existsById((long) 4));
+    }
+
+    @Test
+    public void quizReadyTest(){
+        Assertions.assertEquals(quizService.quizReady((long)1), true);
+    }
+
+    @Test
+    public void quizNotReadyTest(){
+        Answer updatedAnswer = answersRepository.findById((long) 5).get();
+        updatedAnswer.setCorrectAnswer(false);
+        answersRepository.save(updatedAnswer);
+        Assertions.assertEquals(quizService.quizReady((long)1), false);
     }
 
 }

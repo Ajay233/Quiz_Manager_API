@@ -1,8 +1,10 @@
 package com.apiTest.Quiz.service;
 
+import com.apiTest.Quiz.model.Answer;
 import com.apiTest.Quiz.model.Question;
 import com.apiTest.Quiz.model.Quiz;
 import com.apiTest.Quiz.model.QuizListItem;
+import com.apiTest.Quiz.repository.AnswersRepository;
 import com.apiTest.Quiz.repository.QuestionRepository;
 import com.apiTest.Quiz.repository.QuizRepository;
 import com.apiTest.lookup.model.Lookup;
@@ -24,6 +26,9 @@ public class QuizService {
 
     @Autowired
     QuestionsService questionsService;
+
+    @Autowired
+    AnswersRepository answersRepository;
 
     @Autowired
     LookupRepository lookupRepository;
@@ -51,6 +56,27 @@ public class QuizService {
             }
         });
         return quizList;
+    }
+
+    private Boolean contains(List<Answer> answers, Boolean val){
+        return answers.stream().anyMatch(answer -> answer.getCorrectAnswer().equals(val));
+    }
+
+
+    public Boolean quizReady(Long quizId) {
+        List<Question> questions = questionRepository.findByQuizId(quizId);
+        if(!questions.isEmpty()) {
+            return questions.stream().allMatch(question -> {
+                List<Answer> answers = answersRepository.findByQuestionId(question.getId());
+                if (answers.size() >= 2) {
+                    return contains(answers, true) && contains(answers, false);
+                } else {
+                    return false;
+                }
+            });
+        } else {
+            return false;
+        }
     }
 
 }

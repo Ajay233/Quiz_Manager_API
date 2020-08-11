@@ -88,7 +88,7 @@ public class AuthenticationController {
 //                            "Complete your registration",
 //                            mailConfig
 //                    );
-                    gmailService.sendMail(user.getEmail(), newUser.getForename(), messageTwo, gmailConfig);
+                    gmailService.sendMail("ajaymungurwork@outlook.com", newUser.getForename(), messageTwo, gmailConfig);
                     System.out.println("Email sent");
                 } catch (MailSendException e) {
                     e.printStackTrace();
@@ -163,7 +163,7 @@ public class AuthenticationController {
 //                        "Complete your registration",
 //                        mailConfig
 //                );
-                gmailService.sendMail(user.getEmail(), user.getForename(), messageTwo, gmailConfig);
+                gmailService.sendMail("ajaymungurwork@outlook.com", user.getForename(), messageTwo, gmailConfig);
             } catch(MailSendException e){
                 e.printStackTrace();
             }

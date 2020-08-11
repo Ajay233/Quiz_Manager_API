@@ -84,10 +84,16 @@ public class QuizController {
     @RequestMapping(value = "/quiz/updateStatus", method = RequestMethod.PUT)
     private ResponseEntity<?> updateQuizStatus(@RequestBody Quiz quiz){
         if(quizRepository.findById(quiz.getId()).get() != null){
-            Quiz updatedQuiz = quizRepository.findById(quiz.getId()).get();
-            updatedQuiz.setStatus(quiz.getStatus());
-            Quiz response = quizRepository.save(updatedQuiz);
-            return new ResponseEntity<Quiz>(response, HttpStatus.OK);
+            if(quizService.quizReady(quiz.getId())){
+                Quiz updatedQuiz = quizRepository.findById(quiz.getId()).get();
+                updatedQuiz.setStatus(quiz.getStatus());
+                Quiz response = quizRepository.save(updatedQuiz);
+                return new ResponseEntity<Quiz>(response, HttpStatus.OK);
+            } else {
+                String msg = "A quiz must have a question with at least one correct answer and one wrong" +
+                             " answer before the status can be changed to ready";
+                return new ResponseEntity<String>(msg, HttpStatus.BAD_REQUEST);
+            }
         } else {
             return new ResponseEntity<String>("NOT FOUND", HttpStatus.NOT_FOUND);
         }
