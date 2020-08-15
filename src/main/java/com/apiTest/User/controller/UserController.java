@@ -140,7 +140,16 @@ public class UserController {
         if(userRepository.existsById(user.getId())){
             User userToUpdate = userRepository.findById(user.getId()).get();
             userToUpdate.setPermission(user.getPermission());
-            userRepository.save(userToUpdate);
+            User updatedUser = userRepository.save(userToUpdate);
+            String successMessage = "Your request to change your privilege level to " + updatedUser.getPermission() +
+                    " has now been approved and completed." + "\r\n\r\n\r\n" + "Regards" + "\r\n\r\n" + "The Quiz Manager App";
+            new Thread(() -> {
+                try{
+                    gmailService.sendMail("ajaymungurwork@outlook.com", updatedUser.getForename(), "RE: Permission Change Request", successMessage, gmailConfig);
+                } catch (MailSendException e){
+                    e.printStackTrace();
+                }
+            }).start();
             return ResponseEntity.ok("UPDATED");
         } else {
             return new ResponseEntity<String>("Unable to update, user not found", HttpStatus.NOT_FOUND);
