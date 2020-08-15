@@ -254,4 +254,19 @@ class UserControllerTest {
 
     }
 
+    @Test
+    public void updatePermissionRequestTest() throws Exception{
+        User savedUser1 = userRepository.findById((long) 1).get();
+        String requestedPermision = "ADMIN";
+        String body = "{\"id\":\"" + savedUser1.getId() + "\"," + "\"forename\":\"" + savedUser1.getForename() +
+                "\"," + "\"surname\":\"" + savedUser1.getSurname() + "\"," + "\"email\":\"" + savedUser1.getEmail() +
+                "\"," + "\"email\":\"" + savedUser1.getEmail() + "\"," + "\"permission\":\"" + requestedPermision + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/updatePermissionRequest")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Request sent to Admin"));
+    }
+
 }

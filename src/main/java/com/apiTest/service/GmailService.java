@@ -11,7 +11,7 @@ import java.util.Properties;
 @Service
 public class GmailService {
 
-    public void sendMail(String recipientEmail, String recipientForename, String msgBody, GmailConfig gmailConfig){
+    public void sendMail(String recipientEmail, String recipientForename, String subjectLine, String msgBody, GmailConfig gmailConfig){
         System.out.println("In send mail method");
         Properties properties = new Properties();
 
@@ -31,7 +31,7 @@ public class GmailService {
             }
         });
 
-        Message message = prepareMessage(session, userAccount, recipientEmail, recipientForename, msgBody);
+        Message message = prepareMessage(session, userAccount, recipientEmail, recipientForename, subjectLine, msgBody);
 
         try {
             System.out.println("Trying to send");
@@ -43,12 +43,12 @@ public class GmailService {
         }
     }
 
-    private Message prepareMessage(Session session, String sender, String recipient, String recipientForename, String msgTxt){
+    private Message prepareMessage(Session session, String sender, String recipient, String recipientForename, String subject, String msgTxt){
         try{
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(sender));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
-            message.setSubject("Quiz App Account Verification");
+            message.setSubject(subject);
             message.setText("Hi " + recipientForename + "\n\n" + msgTxt);
             return message;
         }catch(Exception e){

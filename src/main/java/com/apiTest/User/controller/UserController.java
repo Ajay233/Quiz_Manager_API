@@ -3,9 +3,12 @@ package com.apiTest.User.controller;
 import com.apiTest.User.model.User;
 import com.apiTest.User.model.UserDTO;
 import com.apiTest.User.repository.UserRepository;
+import com.apiTest.config.GmailConfig;
+import com.apiTest.service.GmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +28,12 @@ public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private GmailConfig gmailConfig;
+
+    @Autowired
+    private GmailService gmailService;
 
 
 // This has not yet been used.  It was part of the Baeldung tutorial and will need to be looked into
@@ -103,6 +112,27 @@ public class UserController {
             return new ResponseEntity<String>("PASSWORD MISMATCH", HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @RequestMapping(value = "/users/updatePermissionRequest", method = RequestMethod.POST)
+    public ResponseEntity<String> requestUpdatedPermission(@RequestBody UserDTO user){
+        if(userRepository.existsById(user.getId())) {
+            String message = "Access permission request received from:" + "\r\n\r\n" + "name: " + user.getForename() + " " +
+                    user.getSurname() + "\r\n" + "Email: " + user.getEmail() + "\r\n\r\n" + "Request to change permission to: " + user.getPermission();
+            new Thread(() -> {
+                try {
+                    // In reality this method would need to get a list of all super users iterate through the list and
+                    // on each iteration, send an email to their email address
+                    // Or send one email to all super users if that's possible
+                    gmailService.sendMail("ajaymungurwork@outlook.com", "Ajay", "Permission change request", message, gmailConfig);
+                } catch (MailSendException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+            return new ResponseEntity<String>("Request sent to Admin", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("Request not sent - User not recognised", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(value = "/users/updatePermission", method = RequestMethod.PUT)
