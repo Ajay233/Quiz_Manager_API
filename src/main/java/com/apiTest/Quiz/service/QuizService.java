@@ -52,7 +52,9 @@ public class QuizService {
                 QuizListItem item = new QuizListItem(category.getName(), quizzes);
                 quizList.add(item);
             } else {
-                return;
+                ArrayList<Quiz> quizzes = new ArrayList<>();
+                QuizListItem item = new QuizListItem(category.getName(), quizzes);
+                quizList.add(item);
             }
         });
         return quizList;
