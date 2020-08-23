@@ -13,15 +13,15 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long questionId;
-    private int answerNumber;
+    private String answerIndex;
     private String description;
     private Boolean correctAnswer;
 
     public Answer(){}
 
-    public Answer(Long questionId, int answerNumber, String description, Boolean correctAnswer){
+    public Answer(Long questionId, String answerIndex, String description, Boolean correctAnswer){
         this.questionId = questionId;
-        this.answerNumber = answerNumber;
+        this.answerIndex = answerIndex;
         this.description = description;
         this.correctAnswer = correctAnswer;
     }

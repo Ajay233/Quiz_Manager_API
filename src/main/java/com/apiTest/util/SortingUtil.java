@@ -38,23 +38,23 @@ public class SortingUtil {
 
         for(int i = 0; i < highestIndex-1; i++){
 
-            int minimumValue = answers.get(i).getAnswerNumber();
-            int indexOfMinVal = i;
+            String smallestVal = answers.get(i).getAnswerIndex();
+            int indexOfSmallestVal = i;
 
             for(int x = i; x < highestIndex-1; x++){
 
-                if(minimumValue > answers.get(x+1).getAnswerNumber()){
-                    minimumValue = answers.get(x+1).getAnswerNumber();
-                    indexOfMinVal = x + 1;
+                if(smallestVal.compareTo(answers.get(x + 1).getAnswerIndex()) > 0){
+                    smallestVal = answers.get(x+1).getAnswerIndex();
+                    indexOfSmallestVal = x + 1;
                 }
 
             }
 
             //The swap
-            Answer answerToSwapIn = answers.get(indexOfMinVal);
+            Answer answerToSwapIn = answers.get(indexOfSmallestVal);
             Answer answerToSwapOut = answers.get(i);
             answers.set(i, answerToSwapIn);
-            answers.set(indexOfMinVal, answerToSwapOut);
+            answers.set(indexOfSmallestVal, answerToSwapOut);
         }
 
     }

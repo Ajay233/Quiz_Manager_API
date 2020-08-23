@@ -23,10 +23,10 @@ public class AnswerRepositoryTest {
 
     @BeforeEach
     public void setupDatabase(){
-        answer1 = new Answer((long) 1, 1, "Answer1 for questionId 1", false);
-        answer2 = new Answer((long) 1, 2, "Answer2 for questionId 1", true);
-        answer3 = new Answer((long) 1, 3, "Answer3 for questionId 1", false);
-        answer4 = new Answer((long) 2, 1, "Answer1 for questionId 2", false);
+        answer1 = new Answer((long) 1, "A", "Answer1 for questionId 1", false);
+        answer2 = new Answer((long) 1, "B", "Answer2 for questionId 1", true);
+        answer3 = new Answer((long) 1, "C", "Answer3 for questionId 1", false);
+        answer4 = new Answer((long) 2, "A", "Answer1 for questionId 2", false);
         answersRepository.save(answer1);
         answersRepository.save(answer2);
         answersRepository.save(answer3);

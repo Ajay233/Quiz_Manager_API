@@ -32,14 +32,14 @@ public class QuizServiceTest {
     private Quiz quiz = new Quiz("Test Quiz", "Test Quiz Description", "Test category"); // id:1
     private Question question1 = new Question((long) 1, 1, "Test question 1"); // id:1
     private Question question2 = new Question((long) 1, 2, "Test question 2"); // id:2
-    private Answer answer1 = new Answer((long) 1, 1, "Answer 1", false); // id:1
-    private Answer answer2 = new Answer((long) 1, 2, "Answer 2", false); // id:2
-    private Answer answer3 = new Answer((long) 1, 3, "Answer 3", true); // id:3
-    private Answer answer4 = new Answer((long) 1, 4, "Answer 4", false); // id:4
-    private Answer answer5 = new Answer((long) 2, 1, "Answer 1", true); // id:5
-    private Answer answer6 = new Answer((long) 2, 2, "Answer 2", false); // id:6
-    private Answer answer7 = new Answer((long) 2, 3, "Answer 3", false); // id:7
-    private Answer answer8 = new Answer((long) 2, 4, "Answer 4", false); // id:8
+    private Answer answer1 = new Answer((long) 1, "A", "Answer 1", false); // id:1
+    private Answer answer2 = new Answer((long) 1, "B", "Answer 2", false); // id:2
+    private Answer answer3 = new Answer((long) 1, "C", "Answer 3", true); // id:3
+    private Answer answer4 = new Answer((long) 1, "D", "Answer 4", false); // id:4
+    private Answer answer5 = new Answer((long) 2, "A", "Answer 1", true); // id:5
+    private Answer answer6 = new Answer((long) 2, "B", "Answer 2", false); // id:6
+    private Answer answer7 = new Answer((long) 2, "C", "Answer 3", false); // id:7
+    private Answer answer8 = new Answer((long) 2, "D", "Answer 4", false); // id:8
 
 
     @BeforeEach

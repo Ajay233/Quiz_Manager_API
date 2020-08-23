@@ -65,10 +65,10 @@ public class AnswerControllerTest {
         questionRepository.save(question2);
         questionRepository.save(question3);
 
-        answer1 = new Answer((long) 1, 1, "Answer1 for questionId 1", false);
-        answer2 = new Answer((long) 1, 2, "Answer2 for questionId 1", true);
-        answer3 = new Answer((long) 1, 3, "Answer3 for questionId 1", false);
-        answer4 = new Answer((long) 2, 1, "Answer1 for questionId 2", false);
+        answer1 = new Answer((long) 1, "A", "Answer1 for questionId 1", false);
+        answer2 = new Answer((long) 1, "B", "Answer2 for questionId 1", true);
+        answer3 = new Answer((long) 1, "C", "Answer3 for questionId 1", false);
+        answer4 = new Answer((long) 2, "A", "Answer1 for questionId 2", false);
         answersRepository.save(answer1);
         answersRepository.save(answer2);
         answersRepository.save(answer3);
@@ -93,14 +93,14 @@ public class AnswerControllerTest {
 
     @Test
     public void createAnswersTest() throws Exception {
-        Answer answer5 = new Answer((long) 2, 2, "Answer2 for questionId 2", false);
-        Answer answer6 = new Answer((long) 2, 3, "Answer3 for questionId 2", true);
+        Answer answer5 = new Answer((long) 2, "B", "Answer2 for questionId 2", false);
+        Answer answer6 = new Answer((long) 2, "C", "Answer3 for questionId 2", true);
         answer5.setId((long) 5);
         answer6.setId((long) 6);
 
-        String body = "[{\"questionId\":\"" + answer5.getQuestionId() + "\"," + "\"answerNumber\":\"" + answer5.getAnswerNumber() +
+        String body = "[{\"questionId\":\"" + answer5.getQuestionId() + "\"," + "\"answerIndex\":\"" + answer5.getAnswerIndex() +
                 "\"," + "\"description\":\"" + answer5.getDescription() + "\"," + "\"correctAnswer\":\"" + answer5.getCorrectAnswer() +
-                "\"}," + "{\"questionId\":\"" + answer6.getQuestionId() + "\"," + "\"answerNumber\":\"" + answer6.getAnswerNumber() +
+                "\"}," + "{\"questionId\":\"" + answer6.getQuestionId() + "\"," + "\"answerIndex\":\"" + answer6.getAnswerIndex() +
                 "\"," + "\"description\":\"" + answer6.getDescription() + "\"," + "\"correctAnswer\":\"" + answer6.getCorrectAnswer() +
                 "\"}]";
 
@@ -130,16 +130,16 @@ public class AnswerControllerTest {
 
     @Test
     public void updateAnswersTest() throws Exception {
-        Answer updatedAnswer1 = new Answer((long) 2, 2, "Answer2 for questionId 2", false);
-        Answer updatedAnswer2 = new Answer((long) 2, 3, "Answer3 for questionId 2", true);
+        Answer updatedAnswer1 = new Answer((long) 2, "B", "Answer2 for questionId 2", false);
+        Answer updatedAnswer2 = new Answer((long) 2, "C", "Answer3 for questionId 2", true);
         updatedAnswer1.setId((long) 1);
         updatedAnswer2.setId((long) 2);
 
         String body = "[{\"id\":\"" + updatedAnswer1.getId() + "\"," + "\"questionId\":\"" + updatedAnswer1.getQuestionId() +
-                "\"," + "\"answerNumber\":\"" + updatedAnswer1.getAnswerNumber() + "\"," + "\"description\":\"" +
+                "\"," + "\"answerIndex\":\"" + updatedAnswer1.getAnswerIndex() + "\"," + "\"description\":\"" +
                 updatedAnswer1.getDescription() + "\"," + "\"correctAnswer\":\"" + updatedAnswer1.getCorrectAnswer() +
                 "\"}," + "{\"id\":\"" + updatedAnswer2.getId() + "\"," + "\"questionId\":\"" + updatedAnswer2.getQuestionId() +
-                "\"," + "\"answerNumber\":\"" + updatedAnswer2.getAnswerNumber() + "\"," + "\"description\":\"" +
+                "\"," + "\"answerIndex\":\"" + updatedAnswer2.getAnswerIndex() + "\"," + "\"description\":\"" +
                 updatedAnswer2.getDescription() + "\"," + "\"correctAnswer\":\"" + updatedAnswer2.getCorrectAnswer() + "\"}]";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/answer/update")
@@ -157,10 +157,10 @@ public class AnswerControllerTest {
     @Test
     public void deleteAnswersTest() throws Exception {
         String body = "[{\"id\":\"" + answer1.getId() + "\"," + "\"questionId\":\"" + answer1.getQuestionId() +
-                "\"," + "\"answerNumber\":\"" + answer1.getAnswerNumber() + "\"," + "\"description\":\"" +
+                "\"," + "\"answerIndex\":\"" + answer1.getAnswerIndex() + "\"," + "\"description\":\"" +
                 answer1.getDescription() + "\"," + "\"correctAnswer\":\"" + answer1.getCorrectAnswer() +
                 "\"}," + "{\"id\":\"" + answer2.getId() + "\"," + "\"questionId\":\"" + answer2.getQuestionId() +
-                "\"," + "\"answerNumber\":\"" + answer2.getAnswerNumber() + "\"," + "\"description\":\"" +
+                "\"," + "\"answerIndex\":\"" + answer2.getAnswerIndex() + "\"," + "\"description\":\"" +
                 answer2.getDescription() + "\"," + "\"correctAnswer\":\"" + answer2.getCorrectAnswer() + "\"}]";
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/answer/delete")

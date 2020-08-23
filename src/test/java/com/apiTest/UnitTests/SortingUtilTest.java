@@ -29,16 +29,18 @@ public class SortingUtilTest {
     private Question question9 = new Question((long) 1, 1, "Question number 1");
     private Question question10 = new Question((long) 1, 17, "Question number 17");
     private ArrayList<Answer> answers = new ArrayList<>();
-    private Answer answer = new Answer((long) 1, 12, "Answer number 12", false);
-    private Answer answer2 = new Answer((long) 1, 6, "Answer number 6", false);
-    private Answer answer3 = new Answer((long) 1, 8, "Answer number 8", false);
-    private Answer answer4 = new Answer((long) 1, 22, "Answer number 22", false);
-    private Answer answer5 = new Answer((long) 1, 3, "Answer number 3", false);
-    private Answer answer6 = new Answer((long) 1, 55, "Answer number 55", true);
-    private Answer answer7 = new Answer((long) 1, 4, "Answer number 4", false);
-    private Answer answer8 = new Answer((long) 1, 11, "Answer number 11", false);
-    private Answer answer9 = new Answer((long) 1, 1, "Answer number 1", false);
-    private Answer answer10 = new Answer((long) 1, 17, "Answer number 17", false);
+    private Answer answer = new Answer((long) 1, "L", "Answer number 12", false);
+    private Answer answer2 = new Answer((long) 1, "F", "Answer number 6", false);
+    private Answer answer3 = new Answer((long) 1, "H", "Answer number 8", false);
+    private Answer answer4 = new Answer((long) 1, "V", "Answer number 22", false);
+    private Answer answer5 = new Answer((long) 1, "C", "Answer number 3", false);
+    private Answer answer6 = new Answer((long) 1, "Z", "Answer number 55", true);
+    private Answer answer7 = new Answer((long) 1, "D", "Answer number 4", false);
+    private Answer answer8 = new Answer((long) 1, "K", "Answer number 11", false);
+    private Answer answer9 = new Answer((long) 1, "A", "Answer number 1", false);
+    private Answer answer10 = new Answer((long) 1, "Q", "Answer number 17", false);
+
+
 
     @BeforeEach
     void createTestData(){

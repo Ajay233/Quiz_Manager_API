@@ -27,10 +27,10 @@ public class QuestionsServiceTest {
     QuestionsService questionsService;
 
     private Question question1 = new Question((long) 1, 1, "Test question 1"); // id:1
-    private Answer answer1 = new Answer((long) 1, 1, "Answer 1", false); // id:1
-    private Answer answer2 = new Answer((long) 1, 2, "Answer 2", false); // id:2
-    private Answer answer3 = new Answer((long) 1, 3, "Answer 3", true); // id:3
-    private Answer answer4 = new Answer((long) 1, 4, "Answer 4", false); // id:4
+    private Answer answer1 = new Answer((long) 1, "A", "Answer 1", false); // id:1
+    private Answer answer2 = new Answer((long) 1, "B", "Answer 2", false); // id:2
+    private Answer answer3 = new Answer((long) 1, "C", "Answer 3", true); // id:3
+    private Answer answer4 = new Answer((long) 1, "D", "Answer 4", false); // id:4
 
 
     @BeforeEach

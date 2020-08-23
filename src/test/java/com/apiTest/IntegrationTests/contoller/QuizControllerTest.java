@@ -74,8 +74,8 @@ public class QuizControllerTest {
         quiz2 = new Quiz("quiz2", "Test of quiz2", "NotTest");
         quiz3 = new Quiz("quiz3", "Test of quiz3", "Test");
         Question question = new Question((long) 2, 1, "test");
-        Answer answer1 = new Answer((long) 1, 1, "test1", false);
-        Answer answer2 = new Answer((long) 1, 2, "test2", true);
+        Answer answer1 = new Answer((long) 1, "A", "test1", false);
+        Answer answer2 = new Answer((long) 1, "B", "test2", true);
         quizRepository.save(quiz1);
         quizRepository.save(quiz2);
         quizRepository.save(quiz3);
