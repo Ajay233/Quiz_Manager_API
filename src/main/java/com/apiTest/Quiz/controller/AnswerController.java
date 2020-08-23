@@ -31,7 +31,8 @@ public class AnswerController {
     private ResponseEntity<?> createAnswer(@RequestBody List<Answer> answers){
         if(answerValidator.validateAnswer(answers)){
 //            answers.stream().forEach((answer) -> answersRepository.save(answer));
-            List<Answer> savedAnswers = answersRepository.saveAll(answers);
+            List<Answer> capitalisedAnswers = answerValidator.capitalise(answers);
+            List<Answer> savedAnswers = answersRepository.saveAll(capitalisedAnswers);
             return new ResponseEntity<List>(savedAnswers, HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("MISSING FIELDS", HttpStatus.BAD_REQUEST);
@@ -56,7 +57,8 @@ public class AnswerController {
         } else if(!answerValidator.validateAnswer(answers)){
             return new ResponseEntity<String>("INVALID FIELD", HttpStatus.BAD_REQUEST);
         } else {
-            List<Answer> savedAnswers = answersRepository.saveAll(answers);
+            List<Answer> capitalisedAnswers = answerValidator.capitalise(answers);
+            List<Answer> savedAnswers = answersRepository.saveAll(capitalisedAnswers);
             return new ResponseEntity<List>(savedAnswers, HttpStatus.OK);
         }
     }
