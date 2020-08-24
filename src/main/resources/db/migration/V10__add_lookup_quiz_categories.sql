@@ -10,3 +10,5 @@ INSERT INTO lookup (name, type) values ("Technology", "Quiz Category");
 INSERT INTO lookup (name, type) values ("Art", "Quiz Category");
 INSERT INTO lookup (name, type) values ("Literature", "Quiz Category");
 INSERT INTO lookup (name, type) values ("General Knowledge", "Quiz Category");
+INSERT INTO lookup (name, type) values ("Geography", "Quiz Category");
+INSERT INTO lookup (name, type) values ("Food and Drink", "Quiz Category");
