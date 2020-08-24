@@ -9,6 +9,7 @@ import com.apiTest.Quiz.repository.QuestionRepository;
 import com.apiTest.Quiz.repository.QuizRepository;
 import com.apiTest.lookup.model.Lookup;
 import com.apiTest.lookup.repository.LookupRepository;
+import com.apiTest.util.SortingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,9 @@ public class QuizService {
     @Autowired
     LookupRepository lookupRepository;
 
+    @Autowired
+    SortingUtil sortingUtil;
+
     public void deleteQuizAndAssociations(Quiz quiz){
         List<Question> questions = questionRepository.findByQuizId(quiz.getId());
         if(!questions.isEmpty()){
@@ -43,6 +47,7 @@ public class QuizService {
 
     public ArrayList<QuizListItem> getAllQuizesOrderedByCategory() {
         List<Lookup> categories = lookupRepository.findByType("Quiz Category");
+        sortingUtil.LookupSelectSort(categories, categories.size());
         System.out.println(categories);
         ArrayList<QuizListItem> quizList = new ArrayList<>();
         categories.stream().forEach(category -> {

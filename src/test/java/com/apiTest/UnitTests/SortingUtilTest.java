@@ -2,6 +2,7 @@ package com.apiTest.UnitTests;
 
 import com.apiTest.Quiz.model.Answer;
 import com.apiTest.Quiz.model.Question;
+import com.apiTest.lookup.model.Lookup;
 import com.apiTest.util.SortingUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ public class SortingUtilTest {
     private Question question8 = new Question((long) 1, 11, "Question number 11");
     private Question question9 = new Question((long) 1, 1, "Question number 1");
     private Question question10 = new Question((long) 1, 17, "Question number 17");
+
     private ArrayList<Answer> answers = new ArrayList<>();
     private Answer answer = new Answer((long) 1, "L", "Answer number 12", false);
     private Answer answer2 = new Answer((long) 1, "F", "Answer number 6", false);
@@ -40,6 +42,12 @@ public class SortingUtilTest {
     private Answer answer9 = new Answer((long) 1, "A", "Answer number 1", false);
     private Answer answer10 = new Answer((long) 1, "Q", "Answer number 17", false);
 
+    private ArrayList<Lookup> categories = new ArrayList<>();
+    private Lookup cat1 = new Lookup("Geography", "Quiz Category");
+    private Lookup cat2 = new Lookup("Music", "Quiz Category");
+    private Lookup cat3 = new Lookup("Art", "Quiz Category");
+    private Lookup cat4 = new Lookup("Technology", "Quiz Category");
+    private Lookup cat5 = new Lookup("Films", "Quiz Category");
 
 
     @BeforeEach
@@ -54,6 +62,7 @@ public class SortingUtilTest {
         questions.add(question8);
         questions.add(question9);
         questions.add(question10);
+
         answers.add(answer);
         answers.add(answer2);
         answers.add(answer3);
@@ -64,6 +73,12 @@ public class SortingUtilTest {
         answers.add(answer8);
         answers.add(answer9);
         answers.add(answer10);
+
+        categories.add(cat1);
+        categories.add(cat2);
+        categories.add(cat3);
+        categories.add(cat4);
+        categories.add(cat5);
     }
 
     @Test
@@ -94,6 +109,16 @@ public class SortingUtilTest {
         Assertions.assertEquals(answers.get(7), answer10);
         Assertions.assertEquals(answers.get(8), answer4);
         Assertions.assertEquals(answers.get(9), answer6);
+    }
+
+    @Test
+    void lookupSelectSortTest(){
+        sortingUtil.LookupSelectSort(categories, categories.size());
+        Assertions.assertEquals(categories.get(0), cat3);
+        Assertions.assertEquals(categories.get(1), cat5);
+        Assertions.assertEquals(categories.get(2), cat1);
+        Assertions.assertEquals(categories.get(3), cat2);
+        Assertions.assertEquals(categories.get(4), cat4);
     }
 
 }

@@ -154,10 +154,10 @@ public class QuizControllerTest {
                 .headers(httpHeaders))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].category").value("NotTest"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].quizList.[0].name").value("quiz2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].quizList.[0].description").value("Test of quiz2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].quizList.[0].category").value("NotTest"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].category").value("NotTest"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].quizList.[0].name").value("quiz2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].quizList.[0].description").value("Test of quiz2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].quizList.[0].category").value("NotTest"));
     }
 
     @Test
