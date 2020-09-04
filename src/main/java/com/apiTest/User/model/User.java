@@ -17,7 +17,7 @@ public class User {
     private String email;
     private String password;
     private String permission;
-    private String verified;
+    private Boolean verified;
 
     public User(){}
 
@@ -27,7 +27,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.permission = "USER";
-        this.verified = "false";
+        this.verified = false;
     }
 
 }

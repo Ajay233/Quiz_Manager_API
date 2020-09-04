@@ -74,7 +74,7 @@ class UserControllerTest {
     public void setupDatabase(){
         user = new User("Joe", "Blogs", "joeBlogs@test.com", encoder.encode("testPassword"));
         user2 = new User("Peter", "Parker", "spidey@test.com", encoder.encode("test2password"));
-        user.setVerified("true");
+        user.setVerified(true);
         userRepository.save(user);
         userRepository.save(user2);
         UserPrincipal userPrincipal = new UserPrincipal(user);

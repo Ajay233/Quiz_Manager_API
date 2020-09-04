@@ -120,7 +120,7 @@ public class AuthenticationController {
         }
         Long id = verificationToken.getUserId();
         User user = userRepository.findById(id).get();
-        user.setVerified("true");
+        user.setVerified(true);
         userRepository.save(user);
         verificationTokenRepository.deleteById(verificationToken.getId());
 
@@ -175,7 +175,7 @@ public class AuthenticationController {
     @RequestMapping(value = "/auth/login", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
-        if(userRepository.findByEmail(authenticationRequest.getEmail()).getVerified().equals("true")) {
+        if(userRepository.findByEmail(authenticationRequest.getEmail()).getVerified().equals(true)) {
 
             try {
                 authenticationManager.authenticate(
