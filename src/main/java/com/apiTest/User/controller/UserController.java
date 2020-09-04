@@ -141,8 +141,8 @@ public class UserController {
             User userToUpdate = userRepository.findById(user.getId()).get();
             userToUpdate.setPermission(user.getPermission());
             User updatedUser = userRepository.save(userToUpdate);
-            String successMessage = "Your request to change your privilege level to " + updatedUser.getPermission() +
-                    " has now been approved and completed." + "\r\n\r\n\r\n" + "Regards" + "\r\n\r\n" + "The Quiz Manager App";
+            String successMessage = "Your privilege level has now been set to " + updatedUser.getPermission() +
+                    "\r\n\r\n\r\n" + "Regards" + "\r\n\r\n" + "The Quiz Manager App";
             new Thread(() -> {
                 try{
                     gmailService.sendMail("ajaymungurwork@outlook.com", updatedUser.getForename(), "RE: Permission Change Request", successMessage, gmailConfig);
