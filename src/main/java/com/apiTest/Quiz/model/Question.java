@@ -15,6 +15,7 @@ public class Question {
     private Long quizId;
     private int questionNumber;
     private String description;
+    private String imgUrl;
 
     public Question(){}
 

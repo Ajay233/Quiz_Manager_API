@@ -7,6 +7,7 @@ import com.apiTest.Quiz.repository.QuizRepository;
 import com.apiTest.User.model.User;
 import com.apiTest.User.repository.UserRepository;
 import com.apiTest.authentication.model.UserPrincipal;
+import com.apiTest.util.AmazonClient;
 import com.apiTest.util.JwtUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -38,6 +39,9 @@ public class QuestionControllerTest {
 
     @Autowired
     JwtUtil jwtUtil;
+
+    @Autowired
+    AmazonClient amazonClient;
 
     @Autowired
     private MockMvc mockMvc;
@@ -94,20 +98,22 @@ public class QuestionControllerTest {
         Question question5 = new Question((long) 2, 3, "Test question number 3 for quiz2");
         question4.setId((long) 4);
         question5.setId((long) 5);
-        String body = "[{\"quizId\":\"" + question4.getQuizId() + "\"," + "\"questionNumber\":\"" +
-                question4.getQuestionNumber() + "\"," + "\"description\":\"" + question4.getDescription() +
-                "\"},{\"quizId\":\"" + question5.getQuizId() + "\"," + "\"questionNumber\":\"" +
-                question5.getQuestionNumber() + "\"," + "\"description\":\"" + question5.getDescription() + "\"}]";
+//        String body = "[{\"quizId\":\"" + question4.getQuizId() + "\"," + "\"questionNumber\":\"" +
+//                question4.getQuestionNumber() + "\"," + "\"description\":\"" + question4.getDescription() +
+//                "\"},{\"quizId\":\"" + question5.getQuizId() + "\"," + "\"questionNumber\":\"" +
+//                question5.getQuestionNumber() + "\"," + "\"description\":\"" + question5.getDescription() + "\"}]";
 
         mockMvc.perform(MockMvcRequestBuilders.post("/question/create")
                 .headers(httpHeaders)
-                .content(body))
+                .param("quizId", "2")
+                .param("questionNumber", "2")
+                .param("description", "Test question number 2 for quiz2"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[1]").value(question5));
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(question4));
 
         Assertions.assertEquals(questionRepository.findById((long) 4).get(), question4);
-        Assertions.assertEquals(questionRepository.findById((long) 5).get(), question5);
+//        Assertions.assertEquals(questionRepository.findById((long) 5).get(), question5);
 
     }
 
@@ -123,18 +129,20 @@ public class QuestionControllerTest {
 
     @Test
     public void updateQuestionsTest() throws Exception {
-        Question updatedQuestion3 = new Question((long) 1, 3, "Test question number 3 for quiz1");
+        Question updatedQuestion3 = new Question((long) 2, 3, "Test question number 3 for quiz1");
         updatedQuestion3.setId((long) 3);
-        String body = "[{\"id\":\"" + updatedQuestion3.getId() + "\"," + "\"quizId\":\"" + updatedQuestion3.getQuizId() +
-                "\"," + "\"questionNumber\":\"" + updatedQuestion3.getQuestionNumber() + "\"," + "\"description\":\"" +
-                updatedQuestion3.getDescription() + "\"}]";
+//        String body = "[{\"id\":\"" + updatedQuestion3.getId() + "\"," + "\"quizId\":\"" + updatedQuestion3.getQuizId() +
+//                "\"," + "\"questionNumber\":\"" + updatedQuestion3.getQuestionNumber() + "\"," + "\"description\":\"" +
+//                updatedQuestion3.getDescription() + "\"}]";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/question/update")
                 .headers(httpHeaders)
-                .content(body))
+                .param("id", "3")
+                .param("questionNumber", "3")
+                .param("description", "Test question number 3 for quiz1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0]").value(updatedQuestion3));
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(updatedQuestion3));
     }
 
     @Test

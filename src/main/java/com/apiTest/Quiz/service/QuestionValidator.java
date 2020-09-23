@@ -33,6 +33,10 @@ public class QuestionValidator {
         return validateQuestionIds(questions) && validateQuestionDescriptions(questions);
     }
 
+    public boolean validateQuestion(Question question){
+        return question.getQuizId().getClass().equals(Long.class) && !question.getDescription().isEmpty();
+    }
+
     public boolean validateQuestionsExist(List<Question> questions){
         return questions.stream().allMatch((question) -> questionRepository.existsById(question.getId()));
     }
