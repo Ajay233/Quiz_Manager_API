@@ -1,0 +1,1 @@
+ALTER TABLE quizes ADD COLUMN img_url VARCHAR(250) DEFAULT null;

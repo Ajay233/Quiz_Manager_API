@@ -106,12 +106,15 @@ public class QuizControllerTest {
     @Test
     public void createQuizTest() throws Exception {
         Quiz quiz4 = new Quiz("quiz4", "Test of quiz4", "TestCat2");
-        String body = "{\"name\":\"" + quiz4.getName() + "\"," + "\"description\":\"" + quiz4.getDescription() +
-                "\"," + "\"category\":\"" + quiz4.getCategory() + "\"," + "\"status\":\"" + quiz4.getStatus() + "\"}";
+//        String body = "{\"name\":\"" + quiz4.getName() + "\"," + "\"description\":\"" + quiz4.getDescription() +
+//                "\"," + "\"category\":\"" + quiz4.getCategory() + "\"," + "\"status\":\"" + quiz4.getStatus() + "\"}";
         quiz4.setId((long) 4);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/quiz/create")
                 .headers(httpHeaders)
-                .content(body))
+                .param("name", "quiz4")
+                .param("description", "Test of quiz4")
+                .param("category", "TestCat2"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$").value(quiz4));
@@ -180,13 +183,16 @@ public class QuizControllerTest {
         Quiz updatedQuiz2 = new Quiz("updatedQuiz2", "Test of quiz2 after update", "NotTest");
         updatedQuiz2.setId(quiz2Id);
 
-        String body = "{\"id\":\"" + updatedQuiz2.getId() + "\"," +  "\"name\":\"" + updatedQuiz2.getName() + "\"," +
-                "\"description\":\"" + updatedQuiz2.getDescription() + "\"," + "\"category\":\"" +
-                updatedQuiz2.getCategory() + "\"," + "\"status\":\"" + updatedQuiz2.getStatus() + "\"}";
+//        String body = "{\"id\":\"" + updatedQuiz2.getId() + "\"," +  "\"name\":\"" + updatedQuiz2.getName() + "\"," +
+//                "\"description\":\"" + updatedQuiz2.getDescription() + "\"," + "\"category\":\"" +
+//                updatedQuiz2.getCategory() + "\"," + "\"status\":\"" + updatedQuiz2.getStatus() + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/quiz/update")
                 .headers(httpHeaders)
-                .content(body))
+                .param("id", "2")
+                .param("name", "updatedQuiz2")
+                .param("description", "Test of quiz2 after update")
+                .param("category", "NotTest"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$").value(updatedQuiz2));
