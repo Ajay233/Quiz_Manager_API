@@ -3,9 +3,11 @@ package com.apiTest.IntegrationTests.contoller;
 import com.apiTest.Quiz.model.Answer;
 import com.apiTest.Quiz.model.Question;
 import com.apiTest.Quiz.model.Quiz;
+import com.apiTest.Quiz.model.QuizDownload;
 import com.apiTest.Quiz.repository.AnswersRepository;
 import com.apiTest.Quiz.repository.QuestionRepository;
 import com.apiTest.Quiz.repository.QuizRepository;
+import com.apiTest.Quiz.service.QuizService;
 import com.apiTest.User.model.User;
 import com.apiTest.User.repository.UserRepository;
 import com.apiTest.authentication.model.UserPrincipal;
@@ -47,6 +49,9 @@ public class QuizControllerTest {
     LookupRepository lookupRepository;
 
     @Autowired
+    QuizService quizService;
+
+    @Autowired
     JwtUtil jwtUtil;
 
     @Autowired
@@ -74,15 +79,21 @@ public class QuizControllerTest {
         quiz2 = new Quiz("quiz2", "Test of quiz2", "NotTest");
         quiz3 = new Quiz("quiz3", "Test of quiz3", "Test");
         Question question = new Question((long) 2, 1, "test");
+        Question question2 = new Question((long) 2, 2, "test2");
         Answer answer1 = new Answer((long) 1, "A", "test1", false);
         Answer answer2 = new Answer((long) 1, "B", "test2", true);
+        Answer answer3 = new Answer((long) 2, "A", "test answer 1", false);
+        Answer answer4 = new Answer((long) 2, "B", "test answer 2", true);
         quizRepository.save(quiz1);
         quizRepository.save(quiz2);
         quizRepository.save(quiz3);
 
         questionRepository.save(question);
+        questionRepository.save(question2);
         answersRepository.save(answer1);
         answersRepository.save(answer2);
+        answersRepository.save(answer3);
+        answersRepository.save(answer4);
 
         user = new User("Joe", "Blogs", "joeBlogs@test.com", encoder.encode("testPassword"));
         userRepository.save(user);
@@ -218,6 +229,20 @@ public class QuizControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$").value(updatedQuiz));
 
         Assertions.assertEquals(quizRepository.findById((long) 2).get(), updatedQuiz);
+    }
+
+    @Test
+    public void quizDownloadTest() throws Exception {
+
+        QuizDownload quizDownload = quizService.quizDownloadData((long) 1);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/quiz/download")
+                .headers(httpHeaders)
+                .param("id", "1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.questions").value(quizDownload.getQuestions()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.answers").value(quizDownload.getAnswers()));
     }
 
 }

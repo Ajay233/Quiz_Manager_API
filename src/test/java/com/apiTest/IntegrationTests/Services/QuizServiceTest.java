@@ -3,6 +3,7 @@ package com.apiTest.IntegrationTests.Services;
 import com.apiTest.Quiz.model.Answer;
 import com.apiTest.Quiz.model.Question;
 import com.apiTest.Quiz.model.Quiz;
+import com.apiTest.Quiz.model.QuizDownload;
 import com.apiTest.Quiz.repository.AnswersRepository;
 import com.apiTest.Quiz.repository.QuestionRepository;
 import com.apiTest.Quiz.repository.QuizRepository;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 @SpringBootTest
 public class QuizServiceTest {
@@ -86,6 +89,20 @@ public class QuizServiceTest {
         updatedAnswer.setCorrectAnswer(false);
         answersRepository.save(updatedAnswer);
         Assertions.assertEquals(quizService.quizReady((long)1), false);
+    }
+
+    @Test
+    public void quizDownloadDataTest(){
+        List<Question> questions = questionRepository.findByQuizId((long) 1);
+        List<Answer> answerSet1 = answersRepository.findByQuestionId((long) 1);
+        List<Answer> answerSet2 = answersRepository.findByQuestionId((long) 2);
+
+        QuizDownload quizDownload = quizService.quizDownloadData((long) 1);
+
+        Assertions.assertEquals(quizDownload.getQuestions().get(0), questions.get(0));
+        Assertions.assertEquals(quizDownload.getQuestions().get(1), questions.get(1));
+        Assertions.assertEquals(quizDownload.getAnswers().get(questions.get(0).getId()), answerSet1);
+        Assertions.assertEquals(quizDownload.getAnswers().get(questions.get(1).getId()), answerSet2);
     }
 
 }

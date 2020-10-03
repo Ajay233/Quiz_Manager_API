@@ -1,9 +1,6 @@
 package com.apiTest.Quiz.service;
 
-import com.apiTest.Quiz.model.Answer;
-import com.apiTest.Quiz.model.Question;
-import com.apiTest.Quiz.model.Quiz;
-import com.apiTest.Quiz.model.QuizListItem;
+import com.apiTest.Quiz.model.*;
 import com.apiTest.Quiz.repository.AnswersRepository;
 import com.apiTest.Quiz.repository.QuestionRepository;
 import com.apiTest.Quiz.repository.QuizRepository;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -84,6 +82,19 @@ public class QuizService {
         } else {
             return false;
         }
+    }
+
+    public QuizDownload quizDownloadData(Long quizId){
+        QuizDownload quizDownload = new QuizDownload();
+        List<Question> questions = questionRepository.findByQuizId(quizId);
+        quizDownload.setQuestions(questions);
+        HashMap<Long, List<Answer>> answers = new HashMap<>();
+        questions.stream().forEach(question -> {
+            List<Answer> answerList = answersRepository.findByQuestionId(question.getId());
+            answers.put(question.getId(), answerList);
+        });
+        quizDownload.setAnswers(answers);
+        return quizDownload;
     }
 
 }

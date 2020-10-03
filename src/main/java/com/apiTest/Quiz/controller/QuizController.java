@@ -1,6 +1,7 @@
 package com.apiTest.Quiz.controller;
 
 import com.apiTest.Quiz.model.Quiz;
+import com.apiTest.Quiz.model.QuizDownload;
 import com.apiTest.Quiz.model.QuizListItem;
 import com.apiTest.Quiz.repository.QuizRepository;
 import com.apiTest.Quiz.service.QuizService;
@@ -136,6 +137,12 @@ public class QuizController {
         quiz.setImgUrl(null);
         Quiz updatedQuiz = quizRepository.save(quiz);
         return new ResponseEntity<Quiz>(updatedQuiz, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/quiz/download", method = RequestMethod.GET)
+    private ResponseEntity<?> quizDownload(@RequestParam Long id){
+        QuizDownload quizDownload = quizService.quizDownloadData(id);
+        return new ResponseEntity<QuizDownload>(quizDownload, HttpStatus.OK);
     }
 
 }
