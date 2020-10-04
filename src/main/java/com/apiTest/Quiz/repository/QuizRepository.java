@@ -16,7 +16,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "truncate table quizes", nativeQuery = true)
+    @Query(value = "truncate table quizzes", nativeQuery = true)
     void truncateTable();
 
 }
