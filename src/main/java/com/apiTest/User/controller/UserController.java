@@ -3,12 +3,10 @@ package com.apiTest.User.controller;
 import com.apiTest.User.model.User;
 import com.apiTest.User.model.UserDTO;
 import com.apiTest.User.repository.UserRepository;
-import com.apiTest.config.GmailConfig;
-import com.apiTest.service.GmailService;
+import com.apiTest.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,10 +28,7 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private GmailConfig gmailConfig;
-
-    @Autowired
-    private GmailService gmailService;
+    private MailService mailService;
 
 
 // This has not yet been used.  It was part of the Baeldung tutorial and will need to be looked into
@@ -86,7 +81,6 @@ public class UserController {
     @RequestMapping(value = "/users/updatePassword", method = RequestMethod.PUT)
     public ResponseEntity<?> updatePassword(@RequestBody UserDTO newDetails){
         if(newDetails.getRetypedPassword().equals(newDetails.getNewPassword())) {
-
             try {
                 User user = userRepository.findById(newDetails.getId()).get();
                 try {
@@ -114,42 +108,25 @@ public class UserController {
 
     }
 
+    // UPDATE PERMISSION REQUEST
     @RequestMapping(value = "/users/updatePermissionRequest", method = RequestMethod.POST)
     public ResponseEntity<String> requestUpdatedPermission(@RequestBody UserDTO user){
         if(userRepository.existsById(user.getId())) {
-            String message = "Access permission request received from:" + "\r\n\r\n" + "name: " + user.getForename() + " " +
-                    user.getSurname() + "\r\n" + "Email: " + user.getEmail() + "\r\n\r\n" + "Request to change permission to: " + user.getPermission();
-            new Thread(() -> {
-                try {
-                    // In reality this method would need to get a list of all super users iterate through the list and
-                    // on each iteration, send an email to their email address
-                    // Or send one email to all super users if that's possible
-                    gmailService.sendMail("ajaymungurwork@outlook.com", "Ajay", "Permission change request", message, gmailConfig);
-                } catch (MailSendException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+            mailService.sendPermissionChangeRequestEmail(user);
             return new ResponseEntity<String>("Request sent to Admin", HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("Request not sent - User not recognised", HttpStatus.BAD_REQUEST);
         }
     }
 
+    // UPDATE USER PERMISSION
     @RequestMapping(value = "/users/updatePermission", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserPermission(@RequestBody UserDTO user){
         if(userRepository.existsById(user.getId())){
             User userToUpdate = userRepository.findById(user.getId()).get();
             userToUpdate.setPermission(user.getPermission());
             User updatedUser = userRepository.save(userToUpdate);
-            String successMessage = "Your privilege level has now been set to " + updatedUser.getPermission() +
-                    "\r\n\r\n\r\n" + "Regards" + "\r\n\r\n" + "The Quiz Manager App";
-            new Thread(() -> {
-                try{
-                    gmailService.sendMail("ajaymungurwork@outlook.com", updatedUser.getForename(), "RE: Permission Change Request", successMessage, gmailConfig);
-                } catch (MailSendException e){
-                    e.printStackTrace();
-                }
-            }).start();
+            mailService.sendPermissionChangedEmail(updatedUser);
             return ResponseEntity.ok("UPDATED");
         } else {
             return new ResponseEntity<String>("Unable to update, user not found", HttpStatus.NOT_FOUND);
