@@ -7,15 +7,13 @@ import com.apiTest.authentication.model.AuthenticationResponse;
 import com.apiTest.authentication.model.VerificationResponse;
 import com.apiTest.authentication.model.VerificationToken;
 import com.apiTest.authentication.repository.VerificationTokenRepository;
-import com.apiTest.config.GmailConfig;
-import com.apiTest.service.GmailService;
+import com.apiTest.service.MailService;
 import com.apiTest.service.QuizUserDetailsService;
 import com.apiTest.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,10 +45,7 @@ public class AuthenticationController {
     private JwtUtil jwtTokenUtil;
 
     @Autowired
-    private GmailConfig gmailConfig;
-
-    @Autowired
-    private GmailService gmailService;
+    private MailService mailService;
 
     // SIGN UP
     @RequestMapping(value = "/auth/signUp", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -72,28 +67,8 @@ public class AuthenticationController {
             // save the token to the token table
             verificationTokenRepository.save(verificationToken);
 
-            // create the message that will go in the email.  will need to include the token
-            String message = "Hi " + newUser.getForename() + "\r\n\r\n" + "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:3000/verify?token=" + verificationToken.getToken();
-            String messageTwo = "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:3000/verify?token=" + verificationToken.getToken();
+            mailService.sendWelcomeEmail(newUser, verificationToken);
 
-            // Start a new thread so the user can be informed that their account has been successfully created
-            // Send the token as a link in an email to the user
-            new Thread(() -> {
-                try {
-                    System.out.println("In thread");
-//                    MailService mailService = new MailService();
-//                    mailService.composeAndSendEmail(message,
-//                            "ajaymungur@gmail.com",
-//                            "ajaymungur@hotmail.com",
-//                            "Complete your registration",
-//                            mailConfig
-//                    );
-                    gmailService.sendMail("ajaymungurwork@outlook.com", newUser.getForename(), "Quiz App Account Verification", messageTwo, gmailConfig);
-                    System.out.println("Email sent");
-                } catch (MailSendException e) {
-                    e.printStackTrace();
-                }
-            }).start();
             return ResponseEntity.ok("Welcome to the quiz app");
         } else {
             return ResponseEntity.badRequest().body("That email already has an account");
@@ -150,24 +125,8 @@ public class AuthenticationController {
         System.out.println(replacementToken.getExpiryDate());
         verificationTokenRepository.save(replacementToken);
 
-        // create the message that will go in the email
-        String message = "Hi " + user.getForename() + "\r\n\r\n" + "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:3000/verify?token=" + replacementToken.getToken();
-        String messageTwo = "In order to complete the registration process please click on the link below to verify your account:" + "\r\n\r\n" + "http://localhost:3000/verify?token=" + replacementToken.getToken();
-        // send email
-        new Thread(() -> {
-            try {
-//                MailService mailService = new MailService();
-//                mailService.composeAndSendEmail(message,
-//                        "ajaymungur@gmail.com",
-//                        "ajaymungur@hotmail.com",
-//                        "Complete your registration",
-//                        mailConfig
-//                );
-                gmailService.sendMail("ajaymungurwork@outlook.com", user.getForename(), "Quiz App Account Verification", messageTwo, gmailConfig);
-            } catch(MailSendException e){
-                e.printStackTrace();
-            }
-        }).start();
+        mailService.resendToken(user, replacementToken);
+
         return ResponseEntity.ok("RE-ISSUED");
     }
 
