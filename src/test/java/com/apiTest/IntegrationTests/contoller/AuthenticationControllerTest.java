@@ -178,19 +178,20 @@ public class AuthenticationControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.user.verified").value("true"));
     }
 
-    @Test
-    void authenticateUnverifiedUser() throws Exception {
-        String username = "spidey@test.com";
-        String password = "test2password";
 
-        String body = "{\"email\":\"" + username + "\"," + "\"password\":\"" + password + "\"}";
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/auth/login")
-                        .header("Content-Type", "application/json")
-                        .content(body))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.content().string("NOT VERIFIED"));
-    }
+//    @Test
+//    void authenticateUnverifiedUser() throws Exception {
+//        String username = "spidey@test.com";
+//        String password = "test2password";
+//
+//        String body = "{\"email\":\"" + username + "\"," + "\"password\":\"" + password + "\"}";
+//
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.post("/auth/login")
+//                        .header("Content-Type", "application/json")
+//                        .content(body))
+//                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+//                .andExpect(MockMvcResultMatchers.content().string("NOT VERIFIED"));
+//    }
 
 }

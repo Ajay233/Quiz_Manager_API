@@ -64,6 +64,25 @@ public class MailService {
         }).start();
     }
 
+    public void restartVirificationProcess(User user, VerificationToken token){
+        String message = "Hi " + user.getForename() + "\r\n\r\n" + "Your email has just been updated, you will now need to verify this before you can resume/commence normal service." +
+                "\r\n\r\n" + "Please click on the link below to verify your account:" + "\r\n\r\n" +
+                "http://localhost:3000/verify?token=" + token.getToken();
+        new Thread(() -> {
+            try {
+                gmailService.sendMail(
+                        "ajaymungurwork@outlook.com",
+                        user.getForename(),
+                        "Quiz App Account Verification",
+                        message,
+                        gmailConfig
+                );
+            } catch(MailSendException e){
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     public void sendPermissionChangeRequestEmail(UserDTO user){
         String message = "Access permission request received from:" + "\r\n\r\n" + "name: " + user.getForename() + " " +
                 user.getSurname() + "\r\n" + "Email: " + user.getEmail() + "\r\n\r\n" +

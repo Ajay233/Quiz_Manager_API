@@ -3,13 +3,19 @@ package com.apiTest.User.controller;
 import com.apiTest.User.model.User;
 import com.apiTest.User.model.UserDTO;
 import com.apiTest.User.repository.UserRepository;
+import com.apiTest.authentication.model.AuthenticationResponse;
+import com.apiTest.authentication.model.VerificationToken;
+import com.apiTest.authentication.repository.VerificationTokenRepository;
 import com.apiTest.service.MailService;
+import com.apiTest.service.QuizUserDetailsService;
+import com.apiTest.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +35,15 @@ public class UserController {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private QuizUserDetailsService quizUserDetailsService;
+
+    @Autowired
+    private VerificationTokenRepository verificationTokenRepository;
+
+    @Autowired
+    private JwtUtil jwtTokenUtil;
 
 
 // This has not yet been used.  It was part of the Baeldung tutorial and will need to be looked into
@@ -66,15 +81,31 @@ public class UserController {
         }
     }
 
-    //EDIT PROFILE DATA (Forename, Surname, Email  ** will need to handle email separately and do another verify **)
+    //EDIT PROFILE DATA
     @RequestMapping(value = "/users/update", method = RequestMethod.PUT)
     public ResponseEntity<?> updateUserData(@RequestBody UserDTO updatedUserData){
         User user = userRepository.findById(updatedUserData.getId()).get();
         user.setForename(updatedUserData.getForename());
         user.setSurname(updatedUserData.getSurname());
-        user.setEmail(updatedUserData.getNewEmail());
-        userRepository.save(user);
-        return ResponseEntity.ok("UPDATED");
+        if(!user.getEmail().equals(updatedUserData.getNewEmail())){
+            user.setEmail(updatedUserData.getNewEmail());
+            user.setVerified(false);
+            User savedUser = userRepository.save(user);
+            if(verificationTokenRepository.findByUserId(user.getId()) != null){
+                VerificationToken tokenToDelete = verificationTokenRepository.findByUserId(user.getId());
+                verificationTokenRepository.delete(tokenToDelete);
+            }
+            VerificationToken verificationToken = new VerificationToken(savedUser.getId());
+            verificationTokenRepository.save(verificationToken);
+            mailService.restartVirificationProcess(savedUser, verificationToken);
+            final UserDetails userDetails = quizUserDetailsService.loadUserByUsername(user.getEmail());
+            savedUser.setPassword("");
+            final String jwt = jwtTokenUtil.generateToken(userDetails);
+            return ResponseEntity.ok(new AuthenticationResponse(savedUser, jwt));
+        } else {
+            userRepository.save(user);
+            return ResponseEntity.ok("UPDATED");
+        }
     }
 
     //UPDATE PASSWORD

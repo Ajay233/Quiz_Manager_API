@@ -118,6 +118,34 @@ class UserControllerTest {
     }
 
     @Test
+    void updateUserEmail() throws Exception {
+        String id = "1";
+        String forename = "Joey";
+        String surname = "Blogger";
+        String email = "joeBlogs@test.com";
+        String newEmail = "joeyBlogger@test.com";
+
+        String body = "{\"id\":\"" + id + "\"," + "\"forename\":\"" + forename + "\"," + "\"surname\":\"" + surname +
+                "\"," + "\"email\":\"" + email + "\"," + "\"newEmail\":\"" + newEmail + "\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/update")
+                .headers(httpHeaders)
+                .content(body))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.jwt").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.forename").value("Joey"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.surname").value("Blogger"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.email").value("joeyBlogger@test.com"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.password").value(""))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.permission").value("USER"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.verified").value("false"));
+
+        Assertions.assertEquals(userRepository.findByEmail("joeyBlogger@test.com").getForename(), forename);
+        Assertions.assertEquals(userRepository.findByEmail("joeyBlogger@test.com").getSurname(), surname);
+        Assertions.assertEquals(userRepository.findByEmail("joeyBlogger@test.com").getEmail(), newEmail);
+        Assertions.assertEquals(userRepository.findByEmail("joeyBlogger@test.com").getVerified(), false);
+    }
+
+    @Test
     void updatePassword() throws Exception {
         String id = "1";
         String email = "joeBlogs@test.com";
