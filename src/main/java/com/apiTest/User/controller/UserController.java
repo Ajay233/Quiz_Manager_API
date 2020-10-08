@@ -103,8 +103,8 @@ public class UserController {
             final String jwt = jwtTokenUtil.generateToken(userDetails);
             return ResponseEntity.ok(new AuthenticationResponse(savedUser, jwt));
         } else {
-            userRepository.save(user);
-            return ResponseEntity.ok("UPDATED");
+            User savedUser = userRepository.save(user);
+            return new ResponseEntity<User>(savedUser, HttpStatus.OK);
         }
     }
 

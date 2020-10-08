@@ -110,7 +110,12 @@ class UserControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users/update").headers(httpHeaders).content(body))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.content().string("UPDATED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(id))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.forename").value(forename))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.surname").value(surname))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(email))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.permission").value("USER"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.verified").value(true))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         Assertions.assertEquals(userRepository.findByEmail("joeBlogs@test.com").getForename(), forename);
