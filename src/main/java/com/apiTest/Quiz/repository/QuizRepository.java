@@ -13,6 +13,7 @@ import java.util.List;
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
     List<Quiz> findByName(String name);
     List<Quiz> findByCategory(String category);
+    List<Quiz> findByAuthor(String author);
 
     @Transactional
     @Modifying

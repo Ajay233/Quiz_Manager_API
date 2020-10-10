@@ -32,7 +32,7 @@ public class QuizServiceTest {
     @Autowired
     AnswersRepository answersRepository;
 
-    private Quiz quiz = new Quiz("Test Quiz", "Test Quiz Description", "Test category"); // id:1
+    private Quiz quiz = new Quiz("Test Quiz", "Test Quiz Description", "Test category", "author1"); // id:1
     private Question question1 = new Question((long) 1, 1, "Test question 1"); // id:1
     private Question question2 = new Question((long) 1, 2, "Test question 2"); // id:2
     private Answer answer1 = new Answer((long) 1, "A", "Answer 1", false); // id:1

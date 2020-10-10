@@ -1,0 +1,1 @@
+ALTER TABLE quizzes ADD COLUMN author VARCHAR(250) DEFAULT null;
