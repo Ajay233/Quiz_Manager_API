@@ -19,10 +19,7 @@ public class MailService {
 
     public void sendWelcomeEmail(User newUser, VerificationToken verificationToken){
         // create the message that will go in the email.  will need to include the token
-        String message = "Hi " + newUser.getForename() + "\r\n\r\n" +
-                "In order to complete the registration process please click on the link below to verify your account:" +
-                "\r\n\r\n" + "http://localhost:3000/verify?token=" + verificationToken.getToken();
-        String messageTwo = "In order to complete the registration process please click on the link below to verify your account:" +
+        String message = "In order to complete the registration process please click on the link below to verify your account:" +
                 "\r\n\r\n" + "http://localhost:3000/verify?token=" + verificationToken.getToken();
 
         // Start a new thread so the user can be informed that their account has been successfully created
@@ -33,7 +30,7 @@ public class MailService {
                         "ajaymungurwork@outlook.com",
                         newUser.getForename(),
                         "Quiz App Account Verification",
-                        messageTwo,
+                        message,
                         gmailConfig
                 );
             } catch (MailSendException e) {
@@ -43,10 +40,7 @@ public class MailService {
     }
 
     public void resendToken(User user, VerificationToken replacementToken){
-        String message = "Hi " + user.getForename() + "\r\n\r\n" +
-                "In order to complete the registration process please click on the link below to verify your account:" +
-                "\r\n\r\n" + "http://localhost:3000/verify?token=" + replacementToken.getToken();
-        String messageTwo = "In order to complete the registration process please click on the link below to verify your account:" +
+        String message = "In order to complete the registration process please click on the link below to verify your account:" +
                 "\r\n\r\n" + "http://localhost:3000/verify?token=" + replacementToken.getToken();
         // send email
         new Thread(() -> {
@@ -55,7 +49,7 @@ public class MailService {
                         "ajaymungurwork@outlook.com",
                         user.getForename(),
                         "Quiz App Account Verification",
-                        messageTwo,
+                        message,
                         gmailConfig
                 );
             } catch(MailSendException e){
@@ -64,8 +58,8 @@ public class MailService {
         }).start();
     }
 
-    public void restartVirificationProcess(User user, VerificationToken token){
-        String message = "Hi " + user.getForename() + "\r\n\r\n" + "Your email has just been updated, you will now need to verify this before you can resume/commence normal service." +
+    public void restartVerificationProcess(User user, VerificationToken token){
+        String message = "Your email has just been updated, you will now need to verify this before you can resume/commence normal service." +
                 "\r\n\r\n" + "Please click on the link below to verify your account:" + "\r\n\r\n" +
                 "http://localhost:3000/verify?token=" + token.getToken();
         new Thread(() -> {

@@ -5,7 +5,7 @@ import com.apiTest.User.model.UserDTO;
 import com.apiTest.User.repository.UserRepository;
 import com.apiTest.authentication.model.AuthenticationResponse;
 import com.apiTest.authentication.model.VerificationToken;
-import com.apiTest.authentication.repository.VerificationTokenRepository;
+import com.apiTest.authentication.service.VerificationTokenService;
 import com.apiTest.service.MailService;
 import com.apiTest.service.QuizUserDetailsService;
 import com.apiTest.util.JwtUtil;
@@ -40,10 +40,10 @@ public class UserController {
     private QuizUserDetailsService quizUserDetailsService;
 
     @Autowired
-    private VerificationTokenRepository verificationTokenRepository;
+    private JwtUtil jwtTokenUtil;
 
     @Autowired
-    private JwtUtil jwtTokenUtil;
+    private VerificationTokenService verificationTokenService;
 
 
 // This has not yet been used.  It was part of the Baeldung tutorial and will need to be looked into
@@ -88,20 +88,19 @@ public class UserController {
         user.setForename(updatedUserData.getForename());
         user.setSurname(updatedUserData.getSurname());
         if(!user.getEmail().equals(updatedUserData.getNewEmail())){
-            user.setEmail(updatedUserData.getNewEmail());
-            user.setVerified(false);
-            User savedUser = userRepository.save(user);
-            if(verificationTokenRepository.findByUserId(user.getId()) != null){
-                VerificationToken tokenToDelete = verificationTokenRepository.findByUserId(user.getId());
-                verificationTokenRepository.delete(tokenToDelete);
+            if(userRepository.findByEmail(updatedUserData.getNewEmail()) != null){
+                return new ResponseEntity<String>("An account with that email already exists", HttpStatus.BAD_REQUEST);
+            } else {
+                user.setEmail(updatedUserData.getNewEmail());
+                user.setVerified(false);
+                User savedUser = userRepository.save(user);
+                VerificationToken verificationToken = verificationTokenService.replaceToken(user);
+                mailService.restartVerificationProcess(savedUser, verificationToken);
+                final UserDetails userDetails = quizUserDetailsService.loadUserByUsername(user.getEmail());
+                savedUser.setPassword("");
+                final String jwt = jwtTokenUtil.generateToken(userDetails);
+                return ResponseEntity.ok(new AuthenticationResponse(savedUser, jwt));
             }
-            VerificationToken verificationToken = new VerificationToken(savedUser.getId());
-            verificationTokenRepository.save(verificationToken);
-            mailService.restartVirificationProcess(savedUser, verificationToken);
-            final UserDetails userDetails = quizUserDetailsService.loadUserByUsername(user.getEmail());
-            savedUser.setPassword("");
-            final String jwt = jwtTokenUtil.generateToken(userDetails);
-            return ResponseEntity.ok(new AuthenticationResponse(savedUser, jwt));
         } else {
             User savedUser = userRepository.save(user);
             return new ResponseEntity<User>(savedUser, HttpStatus.OK);
