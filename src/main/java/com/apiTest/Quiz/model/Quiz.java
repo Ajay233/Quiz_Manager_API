@@ -18,15 +18,17 @@ public class Quiz {
     private String status;
     private String imgUrl;
     private String author;
+    private Long authorId;
 
     public Quiz(){}
 
-    public Quiz(String name, String description, String category, String author){
+    public Quiz(String name, String description, String category, String author, Long authorId){
         this.name = name;
         this.description = description;
         this.category = category;
         this.status = "DRAFT";
         this.author = author;
+        this.authorId = authorId;
     }
 
 }

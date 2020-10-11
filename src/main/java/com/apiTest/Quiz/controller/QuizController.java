@@ -34,10 +34,11 @@ public class QuizController {
             @RequestParam(value = "description") String description,
             @RequestParam(value = "category") String category,
             @RequestParam(value = "author") String author,
+            @RequestParam(value = "authorId") Long authorId,
             @RequestParam(value = "file", required = false) MultipartFile file
     ){
         if(name != null && description != null && category != null) {
-            Quiz quiz = new Quiz(name, description, category, author);
+            Quiz quiz = new Quiz(name, description, category, author, authorId);
             if(file != null){
                 quiz.setImgUrl(amazonClient.uploadFile(file));
             }
@@ -94,6 +95,7 @@ public class QuizController {
             @RequestParam(value = "description") String description,
             @RequestParam(value = "category") String category,
             @RequestParam(value = "author") String author,
+            @RequestParam(value = "authorId") Long authorId,
             @RequestParam(value = "file", required = false) MultipartFile file
     ){
         if(quizRepository.existsById(id)){
@@ -102,6 +104,7 @@ public class QuizController {
             quizToUpdate.setDescription(description);
             quizToUpdate.setCategory(category);
             quizToUpdate.setAuthor(author);
+            quizToUpdate.setAuthorId(authorId);
             if(file != null){
                 quizToUpdate.setImgUrl(amazonClient.uploadFile(file));
             }

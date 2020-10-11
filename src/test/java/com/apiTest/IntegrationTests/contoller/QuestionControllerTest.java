@@ -60,9 +60,9 @@ public class QuestionControllerTest {
 
     @BeforeEach
     public void setUpDatabase(){
-        quiz1 = new Quiz("quiz1", "Test of quiz1", "Test", "author1");
-        quiz2 = new Quiz("quiz2", "Test of quiz2", "NotTest", "author2");
-        quiz3 = new Quiz("quiz3", "Test of quiz3", "Test", "author3");
+        quiz1 = new Quiz("quiz1", "Test of quiz1", "Test", "author1", (long) 1);
+        quiz2 = new Quiz("quiz2", "Test of quiz2", "NotTest", "author2", (long) 2);
+        quiz3 = new Quiz("quiz3", "Test of quiz3", "Test", "author3", (long) 3);
         quizRepository.save(quiz1);
         quizRepository.save(quiz2);
         quizRepository.save(quiz3);

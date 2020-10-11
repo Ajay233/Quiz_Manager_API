@@ -75,9 +75,9 @@ public class QuizControllerTest {
         lookupRepository.save(lookupVal1);
         lookupRepository.save(lookupVal2);
 
-        quiz1 = new Quiz("quiz1", "Test of quiz1", "Test", "author1");
-        quiz2 = new Quiz("quiz2", "Test of quiz2", "NotTest", "author2");
-        quiz3 = new Quiz("quiz3", "Test of quiz3", "Test", "author3");
+        quiz1 = new Quiz("quiz1", "Test of quiz1", "Test", "author1", (long) 1);
+        quiz2 = new Quiz("quiz2", "Test of quiz2", "NotTest", "author2", (long) 2);
+        quiz3 = new Quiz("quiz3", "Test of quiz3", "Test", "author3", (long) 3);
         Question question = new Question((long) 2, 1, "test");
         Question question2 = new Question((long) 2, 2, "test2");
         Answer answer1 = new Answer((long) 1, "A", "test1", false);
@@ -116,7 +116,7 @@ public class QuizControllerTest {
 
     @Test
     public void createQuizTest() throws Exception {
-        Quiz quiz4 = new Quiz("quiz4", "Test of quiz4", "TestCat2", "author4");
+        Quiz quiz4 = new Quiz("quiz4", "Test of quiz4", "TestCat2", "author4", (long) 4);
 //        String body = "{\"name\":\"" + quiz4.getName() + "\"," + "\"description\":\"" + quiz4.getDescription() +
 //                "\"," + "\"category\":\"" + quiz4.getCategory() + "\"," + "\"status\":\"" + quiz4.getStatus() + "\"}";
         quiz4.setId((long) 4);
@@ -126,7 +126,8 @@ public class QuizControllerTest {
                 .param("name", "quiz4")
                 .param("description", "Test of quiz4")
                 .param("category", "TestCat2")
-                .param("author", "author4"))
+                .param("author", "author4")
+                .param("authorId", "4"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$").value(quiz4));
@@ -139,7 +140,8 @@ public class QuizControllerTest {
         Quiz quiz2FromDB = quizRepository.findByName(quiz2.getName()).get(0);
         String body = "{\"id\":\"" + quiz2FromDB.getId() + "\"," +  "\"name\":\"" + quiz2FromDB.getName() + "\"," +
                 "\"description\":\"" + quiz2FromDB.getDescription() + "\"," + "\"category\":\"" +
-                quiz2FromDB.getCategory() + "\"," + "\"author\":\"" + quiz2FromDB.getAuthor() + "\"}";
+                quiz2FromDB.getCategory() + "\"," + "\"author\":\"" + quiz2FromDB.getAuthor() +
+                "\"," + "\"authorId\":\"" + quiz2FromDB.getAuthorId() + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/quiz/delete")
                 .headers(httpHeaders).content(body))
@@ -161,7 +163,8 @@ public class QuizControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[1].name").value("quiz3"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[1].description").value("Test of quiz3"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[1].category").value("Test"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].author").value("author3"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].author").value("author3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[1].authorId").value("3"));
     }
 
     @Test
@@ -174,7 +177,8 @@ public class QuizControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].quizList.[0].name").value("quiz2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].quizList.[0].description").value("Test of quiz2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].quizList.[0].category").value("NotTest"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].quizList.[0].author").value("author2"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].quizList.[0].author").value("author2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].quizList.[0].authorId").value("2"));
     }
 
     @Test
@@ -189,13 +193,14 @@ public class QuizControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].name").value(quiz2FromDB.getName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].description").value(quiz2FromDB.getDescription()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[0].category").value(quiz2FromDB.getCategory()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].author").value(quiz2FromDB.getAuthor()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].author").value(quiz2FromDB.getAuthor()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].authorId").value(quiz2FromDB.getAuthorId()));
     }
 
     @Test
     public void updateQuizDetailsTest() throws Exception {
         Long quiz2Id = quizRepository.findByName(quiz2.getName()).get(0).getId();
-        Quiz updatedQuiz2 = new Quiz("updatedQuiz2", "Test of quiz2 after update", "NotTest", "author22");
+        Quiz updatedQuiz2 = new Quiz("updatedQuiz2", "Test of quiz2 after update", "NotTest", "author22", (long) 2);
         updatedQuiz2.setId(quiz2Id);
 
 //        String body = "{\"id\":\"" + updatedQuiz2.getId() + "\"," +  "\"name\":\"" + updatedQuiz2.getName() + "\"," +
@@ -208,7 +213,8 @@ public class QuizControllerTest {
                 .param("name", "updatedQuiz2")
                 .param("description", "Test of quiz2 after update")
                 .param("category", "NotTest")
-                .param("author", "author22"))
+                .param("author", "author22")
+                .param("authorId", "2"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$").value(updatedQuiz2));
@@ -225,7 +231,7 @@ public class QuizControllerTest {
         String body = "{\"id\":\"" + updatedQuiz.getId() + "\"," +  "\"name\":\"" + updatedQuiz.getName() + "\"," +
                 "\"description\":\"" + updatedQuiz.getDescription() + "\"," + "\"category\":\"" +
                 updatedQuiz.getCategory() + "\"," + "\"status\":\"" + updatedQuiz.getStatus() + "\"," +
-                "\"author\":\"" + updatedQuiz.getAuthor() +"\"}";
+                "\"author\":\"" + updatedQuiz.getAuthor() + "\"," +"\"authorId\":\"" + updatedQuiz.getAuthorId() + "\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/quiz/updateStatus")
                 .headers(httpHeaders)
