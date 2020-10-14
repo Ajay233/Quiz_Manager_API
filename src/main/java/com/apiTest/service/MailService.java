@@ -31,7 +31,7 @@ public class MailService {
         new Thread(() -> {
             try {
                 gmailService.sendMail(
-                        "ajaymungurwork@outlook.com",
+                        newUser.getEmail(),
                         newUser.getForename(),
                         "Quiz App Account Verification",
                         message,
@@ -50,7 +50,7 @@ public class MailService {
         new Thread(() -> {
             try {
                 gmailService.sendMail(
-                        "ajaymungurwork@outlook.com",
+                        user.getEmail(),
                         user.getForename(),
                         "Quiz App Account Verification",
                         message,
@@ -69,7 +69,7 @@ public class MailService {
         new Thread(() -> {
             try {
                 gmailService.sendMail(
-                        "ajaymungurwork@outlook.com",
+                        user.getEmail(),
                         user.getForename(),
                         "Quiz App Account Verification",
                         message,
@@ -108,9 +108,8 @@ public class MailService {
                 "\r\n\r\n\r\n" + "Regards" + "\r\n\r\n" + "The Quiz Manager App";
         new Thread(() -> {
             try{
-                // Will need to change the recipient email to updatedUser.getEmail() prior to deployment to prod
                 gmailService.sendMail(
-                        "ajaymungurwork@outlook.com",
+                        updatedUser.getEmail(),
                         updatedUser.getForename(),
                         "RE: Permission Change Request",
                         successMessage,
