@@ -5,6 +5,7 @@ import com.apiTest.User.model.UserDTO;
 import com.apiTest.authentication.model.VerificationToken;
 import com.apiTest.config.GmailConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,13 @@ public class MailService {
     @Autowired
     GmailConfig gmailConfig;
 
+    @Value("${spring.datasource.frontEndUrl}")
+    private String frontEndUrl;
+
     public void sendWelcomeEmail(User newUser, VerificationToken verificationToken){
         // create the message that will go in the email.  will need to include the token
         String message = "In order to complete the registration process please click on the link below to verify your account:" +
-                "\r\n\r\n" + "http://localhost:3000/verify?token=" + verificationToken.getToken();
+                "\r\n\r\n" + frontEndUrl + "/verify?token=" + verificationToken.getToken();
 
         // Start a new thread so the user can be informed that their account has been successfully created
         // Send the token as a link in an email to the user
@@ -41,7 +45,7 @@ public class MailService {
 
     public void resendToken(User user, VerificationToken replacementToken){
         String message = "In order to complete the registration process please click on the link below to verify your account:" +
-                "\r\n\r\n" + "http://localhost:3000/verify?token=" + replacementToken.getToken();
+                "\r\n\r\n" + frontEndUrl + "/verify?token=" + replacementToken.getToken();
         // send email
         new Thread(() -> {
             try {
@@ -61,7 +65,7 @@ public class MailService {
     public void restartVerificationProcess(User user, VerificationToken token){
         String message = "Your email has just been updated, you will now need to verify this before you can resume/commence normal service." +
                 "\r\n\r\n" + "Please click on the link below to verify your account:" + "\r\n\r\n" +
-                "http://localhost:3000/verify?token=" + token.getToken();
+                frontEndUrl + "/verify?token=" + token.getToken();
         new Thread(() -> {
             try {
                 gmailService.sendMail(
