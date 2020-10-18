@@ -9,6 +9,7 @@ The aim of this mini project was to try to create a back end API that will allow
  - Create and manage quizzes
 
  The app serves a React front end which is live and usable at: https://quiz-hosting-and-management.herokuapp.com/
+
  The repo for the front end can be viewed at: https://github.com/Ajay233/react_redux_front_end
 
 ## Set up instructions
