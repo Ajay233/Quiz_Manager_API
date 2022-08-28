@@ -1,6 +1,6 @@
 # Spring Boot API
 
-[![CircleCI](https://circleci.com/gh/Ajay233/stand_alone_api.svg?style=svg)](https://circleci.com/gh/Ajay233/Quiz_Manager_API)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/Ajay233/Quiz_Manager_API/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/Ajay233/Quiz_Manager_API/tree/master)
 
 The aim of this mini project was to try to create a back end API that will allow users to:
  - Create and manage their accounts
