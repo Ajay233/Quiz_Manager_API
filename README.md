@@ -1,6 +1,6 @@
 # Spring Boot API
 
-[![CircleCI](https://circleci.com/gh/Ajay233/stand_alone_api.svg?style=svg)](https://circleci.com/gh/Ajay233/stand_alone_api)
+[![CircleCI](https://circleci.com/gh/Ajay233/stand_alone_api.svg?style=svg)](https://circleci.com/gh/Ajay233/Quiz_Manager_API)
 
 The aim of this mini project was to try to create a back end API that will allow users to:
  - Create and manage their accounts
@@ -10,7 +10,7 @@ The aim of this mini project was to try to create a back end API that will allow
 
  The app serves a React front end which is live and usable at: https://quiz-hosting-and-management.herokuapp.com/
 
- The repo for the front end can be viewed at: https://github.com/Ajay233/react_redux_front_end
+ The repo for the front end can be viewed at: https://github.com/Ajay233/Quiz_Manager_Front_End
 
 ## Set up instructions
 
